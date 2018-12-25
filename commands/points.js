@@ -10,7 +10,7 @@ module.exports.run = async(bot, message, args) => {
             .setColor(0xFF0000)
             // Set the main content of the embed
             .setDescription('1) TestName (1,000)\n2) King Diddy (800)');
-        
+
         // Send the embed to the same channel as the message
         message.channel.send(embed);
     } else if(args[0] === "pve") {
