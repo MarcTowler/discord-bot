@@ -5,6 +5,7 @@ module.exports.run = async(bot, message, args) => {
     function addtwo(x, y) {
         return x + y;
     }
+    module.exports = addtwo;
 }
 
 module.exports.help = {
