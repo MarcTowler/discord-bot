@@ -2,7 +2,17 @@ const Discord = require("discord.js");
 const https = require('https');
 
 module.exports.run = async(bot, message, args) => {
-    if (args[0] === 'pve' && args[1] === 'top10') {
+console.log(args[0].toLowerCase());
+    //lets make sure they are using the right commands, if not kick them out of the run
+    /*if(args[0].toLowerCase() != 'pvp' || args[0].toLowerCase() != 'pve')
+    {
+        return message.channel.send(`Correct usage is !points PvE or !points PvP`);
+    }*/
+
+
+    //Lets pull up the top 10 info and put it into an embed
+    if (args[1] === 'top10') {
+       // https.get('https://api.itslit.uk/G4G/getList/top10')
         const embed = new Discord.RichEmbed()
         // Set the title of the field
             .setTitle('Top 10 PvE Points')
@@ -14,8 +24,7 @@ module.exports.run = async(bot, message, args) => {
         // Send the embed to the same channel as the message
         message.channel.send(embed);
     } else if(args[0] === "pve") {
-        console.log(message.author.tag);
-        https.get('https://api.itslit.uk/G4G/getList/1/' + args[0] + '/null/' + message.author.tag + '/plain/true', (resp) => {
+        https.get('https://api.itslit.uk/G4G/getList/1/' + args[0] + '/null/' + message.author.username + '/plain/true', (resp) => {
             let data = '';
 
             //a chunk of data has been received
@@ -25,14 +34,14 @@ module.exports.run = async(bot, message, args) => {
 
             //the whole response is here
             resp.on('end', () => {
-                message.channel.send(data);
+                message.channel.send(data.toString());
             });
         }).on("error", (err) => {
             console.log("Error: " + err.message);
         });
     }
-}
+};
 
 module.exports.help = {
-    name: "roulette"
-}
+    name: "points"
+};
