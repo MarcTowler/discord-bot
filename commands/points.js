@@ -14,6 +14,7 @@ module.exports.run = async(bot, message, args) => {
         // Send the embed to the same channel as the message
         message.channel.send(embed);
     } else if(args[0] === "pve") {
+        console.log(message.author.tag);
         https.get('https://api.itslit.uk/G4G/getList/1/' + args[0] + '/null/' + message.author.tag + '/plain/true', (resp) => {
             let data = '';
 
