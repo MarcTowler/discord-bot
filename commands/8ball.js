@@ -12,7 +12,7 @@ module.exports.run = async(bot, message, args) => {
 
         //the whole response is here
         resp.on('end', () => {
-            message.channel.send(data);
+            message.channel.send(':8ball: ' + data + ' :8ball:');
         });
     }).on("error", (err) => {
         console.log("Error: " + err.message);
@@ -20,5 +20,7 @@ module.exports.run = async(bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "8ball"
+    name: "8ball",
+    triggers: "8ball",
+    description: "Get a prediction for your yes or no question"
 }
