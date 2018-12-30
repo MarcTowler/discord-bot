@@ -36,7 +36,7 @@ module.exports.run = async(bot, message, args) => {
                             let jsonData = JSON.parse(data);
                             let values = Object.values(jsonData);
                             let newvalues = values.find(function(element) {
-                                return element > message.author.username
+                                return element > message.member.displayName
                             });
 
                             message.channel.send({embed: {
@@ -76,7 +76,7 @@ module.exports.run = async(bot, message, args) => {
                         message.channel.send({embed: {
                                 color: 0x00ff00,
                                 author: {
-                                    name: message.author.username,
+                                    name: message.member.displayName,
                                     icon_url: message.author.avatarURL
                                 },
                                 fields: [{

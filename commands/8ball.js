@@ -2,6 +2,11 @@ const Discord = require("discord.js");
 const https = require('https');
 
 module.exports.run = async(bot, message, args) => {
+    if(args.length === 0)
+    {
+        return message.channel.send(":8ball: You need to actually ask me a question! :8ball:")
+    }
+    console.log(args);
     https.get('https://api.itslit.uk/games/eightball/' + message.author.tag, (resp) => {
         let data = '';
 
