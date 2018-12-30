@@ -104,7 +104,19 @@ module.exports.run = async(bot, message, args) => {
                     });
 
                     resp.on('end', () => {
-                        return message.channel.send(data.toString());
+                        message.channel.send({embed: {
+                                color: 0x00ff00,
+                                author: {
+                                    name: message.member.displayName,
+                                    icon_url: message.author.avatarURL
+                                },
+                                fields: [{
+                                    //name: `${args[1]} - ${message.author.username}`,
+                                    name: `${args[1]}`,
+                                    value: data
+                                }]
+                            }
+                        });
                     });
                 }).on("error", (err) => {
                     console.log(`Error: ${err.message}`);
@@ -124,7 +136,7 @@ module.exports.run = async(bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "points",
+    name: "Points",
     triggers: "points",
     description: "See where you stand in G4G's PvE or PvP clan leaderboards!"
 }
