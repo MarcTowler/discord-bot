@@ -21,7 +21,7 @@ fs.readdir("./commands", (err, files) => {
     jsfile.forEach((f, i) => {
         let props = require(`./commands/${f}`);
 
-        bot.commands.set(props.help.name, props);
+        bot.commands.set(props.help.triggers, props);
     });
 });
 
@@ -48,26 +48,6 @@ bot.on("message", async message => {
     {
         commandfile.run(bot, message, args);
     }
-/*    // If the message is "how to embed"
-    if (command === `${prefix}points`) {
-
-    }
-
-    //check for !hi
-    if(command === `${prefix}roulette`)
-    {
-
-    }
-
-    if(command === `${prefix}8ball`)
-    {
-
-    }
-
-    if(command === `${prefix}archive`)
-    {
-
-    }*/
 });
 
 bot.login(config.token);
