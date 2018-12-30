@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const https = require('https');
 
 module.exports.run = async(bot, message, args) => {
-    https.get(`https://api.itslit.uk/games/roulette/${message.member.displayName}`, (resp) => {
+    https.get(`https://api.itslit.uk/games/rpg/${args[0]}/${message.member.displayName}`, (resp) => {
         let data = '';
 
         resp.on('data', (chunk) => {
@@ -18,7 +18,7 @@ module.exports.run = async(bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "Roulette",
-    triggers: "roulette",
-    description: "A Russian Roulette mini game"
+    name: "Rock Paper Scissors",
+    triggers: "rps",
+    description: `A good old fashioned game of Rock, Paper, Scissors, play by using !${this.triggers} <rock/paper/scissors>`
 }

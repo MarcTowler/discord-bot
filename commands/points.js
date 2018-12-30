@@ -22,6 +22,8 @@ module.exports.run = async(bot, message, args) => {
                     console.log(message.author.tag);
                     https.get(`https://api.itslit.uk/G4G/getList/${args[1]}/${args[0]}/`, (resp) => {
 
+                        args[0] = (args[0].toLowerCase() === 'pve') ? 'PvE' : 'PvP';
+
                         let data = '';
 
                         //a chunk of data has been received
@@ -34,25 +36,26 @@ module.exports.run = async(bot, message, args) => {
                             let jsonData = JSON.parse(data);
                             let values = Object.values(jsonData);
                             let newvalues = values.find(function(element) {
-                                return element > message.author.username
+                                return element > message.member.displayName
                             });
 
                             message.channel.send({embed: {
                                 color: 0x00ff00,
                                 author: {
                                     name: `${args[0]} Top 10 Ranked Players`,
-                                    /*icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",*/
+                                    icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
                                 },
-                                description: `01) ${newvalues[0].name} - ${newvalues[0].points}\n` +
+
+                                description: `01) ${newvalues[0].name} - ${newvalues[0].points}n` +
                                     `02) ${newvalues[1].name} - ${newvalues[1].points}\n` +
-                                    `03) ${newvalues[2].name} - ${newvalues[2].points}\n` +
-                                    `04) ${newvalues[3].name} - ${newvalues[3].points}\n` +
-                                    `05) ${newvalues[4].name} - ${newvalues[4].points}\n` +
-                                    `06) ${newvalues[5].name} - ${newvalues[5].points}\n` +
-                                    `07) ${newvalues[6].name} - ${newvalues[6].points}\n` +
-                                    `08) ${newvalues[7].name} - ${newvalues[7].points}\n` +
-                                    `09) ${newvalues[8].name} - ${newvalues[8].points}\n` +
-                                    `10) ${newvalues[9].name} - ${newvalues[9].points}\n`
+                                    `03) ${newvalues[2].name} -  ${newvalues[2].points}\n` +
+                                    `04) ${newvalues[3].name} -  ${newvalues[3].points}\n` +
+                                    `05) ${newvalues[4].name} -  ${newvalues[4].points}\n` +
+                                    `06) ${newvalues[5].name} -  ${newvalues[5].points}\n` +
+                                    `07) ${newvalues[6].name} -  ${newvalues[6].points}\n` +
+                                    `08) ${newvalues[7].name} -  ${newvalues[7].points}\n` +
+                                    `09) ${newvalues[8].name} -  ${newvalues[8].points}\n` +
+                                    `10) ${newvalues[9].name} -  ${newvalues[9].points}\n`
                             }
                             });
                         }).on("error", (err) => {
@@ -62,7 +65,7 @@ module.exports.run = async(bot, message, args) => {
                     });
                 } else {
                     //It should be calling another user's stats
-                    https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/${args[1].toLowerCase()}/${message.author.username}/plain/true`, (resp) => {
+                    https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${args[1].toLowerCase()}/plain/true`, (resp) => {
                     let data = '';
 
                     resp.on('data', (chunk) => {
@@ -73,11 +76,12 @@ module.exports.run = async(bot, message, args) => {
                         message.channel.send({embed: {
                                 color: 0x00ff00,
                                 author: {
-                                    name: message.author.username,
+                                    name: message.member.displayName,
                                     icon_url: message.author.avatarURL
                                 },
                                 fields: [{
-                                    name: `${args[1]} - ${message.author.username}`,
+                                    //name: `${args[1]} - ${message.author.username}`,
+                                    name: `${args[1]}`,
                                     value: data
                                 }]
                             }
@@ -100,7 +104,19 @@ module.exports.run = async(bot, message, args) => {
                     });
 
                     resp.on('end', () => {
-                        return message.channel.send(data.toString());
+                        message.channel.send({embed: {
+                                color: 0x00ff00,
+                                author: {
+                                    name: message.member.displayName,
+                                    icon_url: message.author.avatarURL
+                                },
+                                fields: [{
+                                    //name: `${args[1]} - ${message.author.username}`,
+                                    name: `${args[1]}`,
+                                    value: data
+                                }]
+                            }
+                        });
                     });
                 }).on("error", (err) => {
                     console.log(`Error: ${err.message}`);
@@ -120,7 +136,7 @@ module.exports.run = async(bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "points",
+    name: "Points",
     triggers: "points",
     description: "See where you stand in G4G's PvE or PvP clan leaderboards!"
 }
