@@ -30,9 +30,9 @@ module.exports.run = async(bot, message, args) => {
             return message.channel.send(`Prestige has been ${args[0]}ed for ${args[2]}'s ${args[1]} ladder and their score has been reset`);
         });
     }).on("error", (err) => {
-        console.log(`Error: ${err.message}`);
-
-        return message.channel.send(`Error: ${err.message}`);
+        message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
+        message.guild.fetchMember('131526937364529152').then(user => {user.send(`A new error has occured in ${message.channel.name} caused by ${message.author.username}` +
+            ` using !${this.help.triggers} ${args}.\n The Error was ${err.message}`)});
     });
 }
 

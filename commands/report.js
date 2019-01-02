@@ -22,5 +22,7 @@ module.exports.run = async(bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "report"
+    name: "Report User",
+    triggers: "report",
+    description: "Report a user"
 }

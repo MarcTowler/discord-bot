@@ -20,7 +20,9 @@ module.exports.run = async(bot, message, args) => {
             message.channel.send(':8ball: ' + data + ' :8ball:');
         });
     }).on("error", (err) => {
-        console.log("Error: " + err.message);
+        message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
+        message.guild.fetchMember('131526937364529152').then(user => {user.send(`A new error has occured in ${message.channel.name} caused by ${message.author.username}` +
+            ` using !${this.help.triggers} ${args}.\n The Error was ${err.message}`)});
     });
 }
 
