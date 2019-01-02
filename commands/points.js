@@ -46,7 +46,7 @@ module.exports.run = async(bot, message, args) => {
                                     icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
                                 },
 
-                                description: `01) ${newvalues[0].name} - ${newvalues[0].points}n` +
+                                description: `01) ${newvalues[0].name} - ${newvalues[0].points}\n` +
                                     `02) ${newvalues[1].name} - ${newvalues[1].points}\n` +
                                     `03) ${newvalues[2].name} -  ${newvalues[2].points}\n` +
                                     `04) ${newvalues[3].name} -  ${newvalues[3].points}\n` +

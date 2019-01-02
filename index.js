@@ -25,18 +25,20 @@ fs.readdir("./commands", (err, files) => {
     });
 });
 
-// Create an instance of a Discord client
+const activity_list = [
+    "with the !help command.",
+    "with the developers console",
+    "with some code",
+    "with your lives"
+];
 
 
 bot.on("ready", async () => {
     console.log(`${bot.user.username} is now online!`);
-    bot.user.setPresence({
-        game: {
-            name: 'The Server',
-            type: 'Watching'
-        },
-        status: 'busy'
-    })
+    setInterval(() => {
+        const index = Math.floor(Math.random() * (activity_list.length - 1) + 1); // generates a random number between 1 and the length of the activities array list (in this case 5).
+        bot.user.setActivity(activity_list[index]); // sets bot's activities to one of the phrases in the arraylist.
+    }, 60000);
 });
 
 bot.on("message", async message => {
