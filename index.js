@@ -30,7 +30,13 @@ fs.readdir("./commands", (err, files) => {
 
 bot.on("ready", async () => {
     console.log(`${bot.user.username} is now online!`);
-    bot.user.setActivity('G4G Development');
+    bot.user.setPresence({
+        game: {
+            name: 'The Server',
+            type: 'Watching'
+        },
+        status: 'busy'
+    })
 });
 
 bot.on("message", async message => {

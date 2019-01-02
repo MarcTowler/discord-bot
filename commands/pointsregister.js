@@ -2,8 +2,12 @@ const Discord = require("discord.js");
 const https = require('https');
 
 module.exports.run = async(bot, message, args) => {
-    https.get(`https://api.itslit.uk/games/cointoss/${message.member.displayName}/${args[0]}`, (resp) => {
 
+    if(args.length !== 1)
+    {
+        return message.channel.send(`Something did not look right there ${message.member.displayName}, please read the description:\n ${this.help.description}`);
+    }
+    https.get(`https://api.itslit.uk/G4g/register/${message.member.displayName}/${args[0]}`, (resp) => {
         let data = '';
 
         resp.on('data', (chunk) => {
@@ -21,7 +25,7 @@ module.exports.run = async(bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "Coin Toss",
-    triggers: "flip",
-    description: `A Coin Toss mini game, usage is !${this.triggers} <heads/tails>`
+    name: "Points Registration",
+    triggers: "pointsregister",
+    description: `A way to link your discord with your Bungie username to be able to use !points, the syntax is !${this.triggers} <D2 Name>`
 }
