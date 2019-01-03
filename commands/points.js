@@ -106,6 +106,7 @@ module.exports.run = async(bot, message, args) => {
                 //Quick check to make sure that PvE or PvP is set
                 https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${message.author.username}/plain/true`, (resp) => {
                     let data = '';
+                    args[0] = (args[0] === "pve") ? "PvE" : "PvP";
 
                     resp.on('data', (chunk) => {
                         data += chunk;
@@ -120,7 +121,7 @@ module.exports.run = async(bot, message, args) => {
                                 },
                                 fields: [{
                                     //name: `${args[1]} - ${message.author.username}`,
-                                    name: `${args[1]}`,
+                                    name: `${args[0]} points`,
                                     value: data
                                 }]
                             }
