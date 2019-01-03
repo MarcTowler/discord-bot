@@ -20,6 +20,8 @@ module.exports.run = async(bot, message, args) => {
     }
 
     //!prestige add pve @KillerAuzzie
+    args[1] = (args[1].substr(0,2) === '<@') ? message.mentions.members.first().user.username : args[1];
+
     https.get(`https://api.itslit.uk/G4G/prestige/${args[0]}/${args[2]}/${args[1]}/true`, (resp) => {
         let data = '';
 
