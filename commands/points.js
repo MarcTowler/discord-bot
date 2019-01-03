@@ -46,7 +46,7 @@ module.exports.run = async(bot, message, args) => {
                                     icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
                                 },
 
-                                description: `01) ${newvalues[0].name} - ${newvalues[0].points}n` +
+                                description: `01) ${newvalues[0].name} - ${newvalues[0].points}\n` +
                                     `02) ${newvalues[1].name} - ${newvalues[1].points}\n` +
                                     `03) ${newvalues[2].name} -  ${newvalues[2].points}\n` +
                                     `04) ${newvalues[3].name} -  ${newvalues[3].points}\n` +
@@ -67,6 +67,10 @@ module.exports.run = async(bot, message, args) => {
                     });
                 } else {
                     //It should be calling another user's stats
+
+                    //lets check to see if @ has been used to tag someone
+                    args[1] = (args[1].substr(0,2) === '<@') ? message.mentions.members.first().user.username : args[1];
+
                     https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${args[1].toLowerCase()}/plain/true`, (resp) => {
                     let data = '';
 
