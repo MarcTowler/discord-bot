@@ -18,12 +18,12 @@ module.exports.run = async(bot, message, args) => {
     difference -= days*3600*24;
 
     hours = Math.floor(difference/3600);
-    difference = hours*3600;
+    difference -= hours*3600;
 
     mins = Math.floor(difference / 60);
     difference -= mins * 60;
 
-    return message.channel.send(`<@${message.author.id}> you have been a part of our discord for ${years} years, ${days} days, ${hours} hours and ${difference} seconds`);
+    return message.channel.send(`<@${message.author.id}> you have been a part of our discord for ${years} years, ${days} days, ${hours} hours, ${mins} minutes and ${difference} seconds`);
 }
 
 module.exports.help = {
