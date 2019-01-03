@@ -19,6 +19,8 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(`Sorry ${message.member.displayName} but you do not have sufficient permissions to remove points`);
     }
 
+    args[1] = (args[1].substr(0,2) === '<@') ? message.mentions.members.first().user.username : args[1];
+
     https.get(`https://api.itslit.uk/G4G/remove/${args[0]}/${args[1]}/${args[2]}/${message.member.displayName}`, (resp) => {
         let data = '';
 
