@@ -67,6 +67,10 @@ module.exports.run = async(bot, message, args) => {
                     });
                 } else {
                     //It should be calling another user's stats
+
+                    //lets check to see if @ has been used to tag someone
+                    args[1] = (args[1].substr(0,2) === '<@') ? message.mentions.members.first().user.username : args[1];
+
                     https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${args[1].toLowerCase()}/plain/true`, (resp) => {
                     let data = '';
 
