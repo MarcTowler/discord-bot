@@ -20,7 +20,8 @@ module.exports.run = async(bot, message, args) => {
                 if(args[1].toLowerCase() === 'top10')
                 {
                     console.log(message.author.tag);
-                    https.get(`https://api.itslit.uk/G4G/getList/${args[1]}/${args[0]}/`, (resp) => {
+                    //https.get(`https://api.itslit.uk/G4G/getList/${args[1]}/${args[0]}/`, (resp) => {
+                    https.get(`https://api.itslit.uk/G4G/getList/all/${args[0]}/`, (resp) => {
 
                         args[0] = (args[0].toLowerCase() === 'pve') ? 'PvE' : 'PvP';
 
@@ -38,26 +39,50 @@ module.exports.run = async(bot, message, args) => {
                             let newvalues = values.find(function(element) {
                                 return element > message.member.displayName
                             });
+                            let pos = newvalues.findIndex(name => name.name === message.author.username);
 
-                            message.channel.send({embed: {
-                                color: 0x00ff00,
-                                author: {
-                                    name: `${args[0]} Top 10 Ranked Players`,
-                                    icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
-                                },
+                            if((pos + 1) > 10) {
+                                message.channel.send({
+                                    embed: {
+                                        color: 0x00ff00,
+                                        author: {
+                                            name: `${args[0]} Top 10 Ranked Players`,
+                                            icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
+                                        },
 
-                                description: `01) ${newvalues[0].name} - ${newvalues[0].points}\n` +
-                                    `02) ${newvalues[1].name} - ${newvalues[1].points}\n` +
-                                    `03) ${newvalues[2].name} -  ${newvalues[2].points}\n` +
-                                    `04) ${newvalues[3].name} -  ${newvalues[3].points}\n` +
-                                    `05) ${newvalues[4].name} -  ${newvalues[4].points}\n` +
-                                    `06) ${newvalues[5].name} -  ${newvalues[5].points}\n` +
-                                    `07) ${newvalues[6].name} -  ${newvalues[6].points}\n` +
-                                    `08) ${newvalues[7].name} -  ${newvalues[7].points}\n` +
-                                    `09) ${newvalues[8].name} -  ${newvalues[8].points}\n` +
-                                    `10) ${newvalues[9].name} -  ${newvalues[9].points}\n`
+                                        description: `01) ${newvalues[0].name} - ${newvalues[0].points}\n` +
+                                            `02) ${newvalues[1].name} - ${newvalues[1].points}\n` +
+                                            `03) ${newvalues[2].name} -  ${newvalues[2].points}\n` +
+                                            `04) ${newvalues[3].name} -  ${newvalues[3].points}\n` +
+                                            `05) ${newvalues[4].name} -  ${newvalues[4].points}\n` +
+                                            `06) ${newvalues[5].name} -  ${newvalues[5].points}\n` +
+                                            `07) ${newvalues[6].name} -  ${newvalues[6].points}\n` +
+                                            `08) ${newvalues[7].name} -  ${newvalues[7].points}\n` +
+                                            `09) ${newvalues[8].name} -  ${newvalues[8].points}\n` +
+                                            `10) ${newvalues[9].name} -  ${newvalues[9].points}\n` +
+                                            `**${pos+1}) ${newvalues[pos].name} - ${newvalues[pos].points}**\n`
+                                    }
+                                });
+                            } else {
+                                let desc = '';
+
+                                for(let i = 0; i < 10; i++)
+                                {
+                                    desc += (i === pos) ? `**[0${i+1}) ${newvalues[i].name} - ${newvalues[i].points}]**\n` : `0${i+1}) ${newvalues[i].name} - ${newvalues[i].points}\n`;
+                                }
+
+                                message.channel.send({
+                                    embed: {
+                                        color: 0x00ff00,
+                                        author: {
+                                            name: `${args[0]} Top 10 Ranked Players`,
+                                            icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
+                                        },
+
+                                        description: desc
+                                    }
+                                });
                             }
-                            });
                         }).on("error", (err) => {
                             message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
                             message.guild.fetchMember('131526937364529152').then(user => {user.send(`A new error has occured in ${message.channel.name} caused by ${message.author.username}` +

@@ -16,12 +16,40 @@ module.exports.run = async(bot, message, args) => {
         });
 
         resp.on('end', () => {
-            //points = parseInt(data.split(",")[2];.replace(`${args[0]} Points`, '')) | 0;
+            //points = parseInt(data.split(",")[2].replace(`${args[0]} Points`, '')) || 0;
             points = (typeof data.split(",")[2] === 'undefined') ? 0 : parseInt(data.split(",")[2].replace(`${args[0]} Points`, ''));
 
             console.log(points);
 //            points = parseInt(points);
 
+            //TODO replace with https://pastebin.com/Xg14CKF8
+            /*
+            const calculate = (input) => {
+
+	objIntervals.map((interval)=> {
+		if(input >= interval.min && input < interval.max) {
+			return interval.max - input;
+		}
+	}
+}
+
+difference = calculate(points);
+
+const objIntervals = {
+	{
+	min: 0,
+    max: 1500
+	},
+
+	{
+	min: 1500,
+    max: 3500
+	}
+//
+more objects
+
+}
+             */
             if(points < 1500)
             {
                 difference = 1500 - points;

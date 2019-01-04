@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 module.exports.run = async(bot, message, args) => {
     //get timestamp for joining discord server
     let discTime = message.guild.member(message.author.id).joinedTimestamp;
+    let fullDate = new Date(message.guild.member(message.author.id).joinedTimestamp).toISOString().replace(/T/, " at ").replace(/\..+/,'');
 
     //Get current timestamp
     let now = new Date().getTime();
@@ -23,7 +24,7 @@ module.exports.run = async(bot, message, args) => {
     mins = Math.floor(difference / 60);
     difference -= mins * 60;
 
-    return message.channel.send(`<@${message.author.id}> you have been a part of our discord for ${years} years, ${days} days, ${hours} hours, ${mins} minutes and ${difference} seconds`);
+    return message.channel.send(`<@${message.author.id}> you joined our discord on ${fullDate}. Which means you have been a member for ${years} years, ${days} days, ${hours} hours, ${mins} minutes and ${Math.round(difference)} seconds`);
 }
 
 module.exports.help = {
