@@ -7,7 +7,7 @@ module.exports.run = async(bot, message, args) => {
         return message.channel.send(this.help.description);
     }
 
-    let allowedAccess = message.guild.roles.find("name", "Clan Council");
+    let allowedAccess = message.guild.roles.find("name", "Officer");
 
     if(allowedAccess === null)
     {

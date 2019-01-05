@@ -46,6 +46,7 @@ bot.on("message", async message => {
     if(message.author.bot) return;
     if(message.channel.type == "dm") return;
 
+    if(config.debug === true && message.author.id !== '131526937364529152') return;
     let prefix = config.prefix;
     let messageArray = message.content.split(" ");
     let command = messageArray[0];
