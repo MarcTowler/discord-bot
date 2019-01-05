@@ -21,7 +21,7 @@ module.exports.run = async(bot, message, args) => {
                 {
                     console.log(message.author.tag);
                     //https.get(`https://api.itslit.uk/G4G/getList/${args[1]}/${args[0]}/`, (resp) => {
-                    https.get(`https://api.itslit.uk/G4G/getList/all/${args[0]}/`, (resp) => {
+                    https.get(`https://api.itslit.uk/G4G/getList/all/${args[1]}/${args[0]}`, (resp) => {
 
                         args[0] = (args[0].toLowerCase() === 'pve') ? 'PvE' : 'PvP';
 
@@ -39,7 +39,8 @@ module.exports.run = async(bot, message, args) => {
                             let newvalues = values.find(function(element) {
                                 return element > message.member.displayName
                             });
-                            let pos = newvalues.findIndex(name => name.name === message.author.username);
+
+                            let pos = newvalues.findIndex(name => name.Name === message.author.username);
 
                             if((pos + 1) > 10) {
                                 message.channel.send({
@@ -50,17 +51,18 @@ module.exports.run = async(bot, message, args) => {
                                             icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
                                         },
 
-                                        description: `01) ${newvalues[0].name} - ${newvalues[0].points}\n` +
-                                            `02) ${newvalues[1].name} - ${newvalues[1].points}\n` +
-                                            `03) ${newvalues[2].name} -  ${newvalues[2].points}\n` +
-                                            `04) ${newvalues[3].name} -  ${newvalues[3].points}\n` +
-                                            `05) ${newvalues[4].name} -  ${newvalues[4].points}\n` +
-                                            `06) ${newvalues[5].name} -  ${newvalues[5].points}\n` +
-                                            `07) ${newvalues[6].name} -  ${newvalues[6].points}\n` +
-                                            `08) ${newvalues[7].name} -  ${newvalues[7].points}\n` +
-                                            `09) ${newvalues[8].name} -  ${newvalues[8].points}\n` +
-                                            `10) ${newvalues[9].name} -  ${newvalues[9].points}\n` +
-                                            `**${pos+1}) ${newvalues[pos].name} - ${newvalues[pos].points}**\n`
+                                        description: `01) ${newvalues[0].Name} - ${newvalues[0].points}\n` +
+                                            `02) ${newvalues[1].Name} - ${newvalues[1].points}\n` +
+                                            `03) ${newvalues[2].Name} -  ${newvalues[2].points}\n` +
+                                            `04) ${newvalues[3].Name} -  ${newvalues[3].points}\n` +
+                                            `05) ${newvalues[4].Name} -  ${newvalues[4].points}\n` +
+                                            `06) ${newvalues[5].Name} -  ${newvalues[5].points}\n` +
+                                            `07) ${newvalues[6].Name} -  ${newvalues[6].points}\n` +
+                                            `08) ${newvalues[7].Name} -  ${newvalues[7].points}\n` +
+                                            `09) ${newvalues[8].Name} -  ${newvalues[8].points}\n` +
+                                            `10) ${newvalues[9].Name} -  ${newvalues[9].points}\n` +
+                                            `...\n`+
+                                            `**${pos+1}) ${newvalues[pos].Name} - ${newvalues[pos].points}**\n`
                                     }
                                 });
                             } else {
@@ -68,7 +70,7 @@ module.exports.run = async(bot, message, args) => {
 
                                 for(let i = 0; i < 10; i++)
                                 {
-                                    desc += (i === pos) ? `**[0${i+1}) ${newvalues[i].name} - ${newvalues[i].points}]**\n` : `0${i+1}) ${newvalues[i].name} - ${newvalues[i].points}\n`;
+                                    desc += (i === pos) ? `**[0${i+1}) ${newvalues[i].Name} - ${newvalues[i].points}]**\n` : `0${i+1}) ${newvalues[i].Name} - ${newvalues[i].points}\n`;
                                 }
 
                                 message.channel.send({
