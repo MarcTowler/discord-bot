@@ -39,6 +39,7 @@ module.exports.run = async(bot, message, args) => {
                             let newvalues = values.find(function(element) {
                                 return element > message.member.displayName
                             });
+
                             let pos = newvalues.findIndex(name => name.Name === message.author.username);
 
                             if((pos + 1) > 10) {
@@ -60,6 +61,7 @@ module.exports.run = async(bot, message, args) => {
                                             `08) ${newvalues[7].Name} -  ${newvalues[7].points}\n` +
                                             `09) ${newvalues[8].Name} -  ${newvalues[8].points}\n` +
                                             `10) ${newvalues[9].Name} -  ${newvalues[9].points}\n` +
+                                            `...\n`+
                                             `**${pos+1}) ${newvalues[pos].Name} - ${newvalues[pos].points}**\n`
                                     }
                                 });
