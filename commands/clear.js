@@ -1,6 +1,8 @@
 const Discord = require("discord.js");
 
 module.exports.run = async(bot, message, args) => {
+    if(message.guild.id === '220467406559117312') return;
+
     if(!message.member.hasPermission("MANAGE_MESSAGES"))
     {
         return message.reply("Git Gud Scrub");

@@ -60,4 +60,16 @@ bot.on("message", async message => {
     }
 });
 
+/*bot.on("guildMemberAdd", member => {
+    member.guild.channels.get('525270659438215178').send({embed: {
+        color: "#4FDCFF",
+        title: `To gain membership and full access to the G4G server, please perform the following steps:`,
+        description: `1: Set your Discord nickname for this server to your Bungie gamer tag or B.net ID\n` +
+                     `2: Confirm your age\n` +
+                     `3: Confirm the Bungie Clan you have joined, eg G4G Orion\n` +
+                     `4: Accept the invitation to join our Guilded page, authorizing with your Discord details`,
+        thumbnail: "https://i.imgur.com/IdGhpsp.png"
+        }});
+});*/
+
 bot.login(config.token);

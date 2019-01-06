@@ -7,6 +7,13 @@ module.exports.run = async(bot, message, args) => {
     let difference = 0;
     let rank;
 
+    if(args.length === 0)
+    {
+        return message
+            .channel
+            .send(`Something didn't quite go right, !${this.help.triggers} requires PvE or PvP as a minimum argument. Try again with !${this.help.triggers} PvE or !${this.help.triggers} PvP`);
+    }
+
     https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${message.author.username}/json/false`, (resp) => {
         let data = '';
         args[0] = (args[0] === "pve") ? "PvE" : "PvP";

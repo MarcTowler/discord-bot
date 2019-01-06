@@ -1,9 +1,12 @@
 const Discord = require("discord.js");
+const dateformat = require('dateformat');
 
 module.exports.run = async(bot, message, args) => {
     //get timestamp for joining discord server
     let discTime = message.guild.member(message.author.id).joinedTimestamp;
-    let fullDate = new Date(message.guild.member(message.author.id).joinedTimestamp).toISOString().replace(/T/, " at ").replace(/\..+/,'');
+    //let fullDate = new Date(message.guild.member(message.author.id).joinedTimestamp).toISOString().replace(/T/, " at ").replace(/\..+/,'');
+    let fullDate = new Date(message.guild.member(message.author.id).joinedTimestamp).toISOString();
+    fullDate = dateformat(fullDate, "mediumDate");
 
     //Get current timestamp
     let now = new Date().getTime();
