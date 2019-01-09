@@ -3,6 +3,7 @@ const dateformat = require('dateformat');
 
 module.exports.run = async(bot, message, args) => {
     //get timestamp for joining discord server
+    console.log(message.author.id);
     let discTime = message.guild.member(message.author.id).joinedTimestamp;
     //let fullDate = new Date(message.guild.member(message.author.id).joinedTimestamp).toISOString().replace(/T/, " at ").replace(/\..+/,'');
     let fullDate = new Date(message.guild.member(message.author.id).joinedTimestamp).toISOString();
