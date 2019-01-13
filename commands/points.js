@@ -176,5 +176,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Points",
     triggers: "points",
-    description: "See where you stand in G4G's PvE or PvP clan leaderboards!"
+    description: "See where you stand in G4G's PvE or PvP clan leaderboards!",
+    role: "everyone"
 }

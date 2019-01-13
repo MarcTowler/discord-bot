@@ -23,5 +23,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Coin Toss",
     triggers: "flip",
-    description: `A Coin Toss mini game, usage is !${this.triggers} <heads/tails>`
+    description: "A Coin Toss mini game, usage is !flip <heads/tails>",
+    role: "everyone"
 }

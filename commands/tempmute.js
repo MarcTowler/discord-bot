@@ -55,5 +55,8 @@ module.exports.run = async(bot,message,args) => {
 }
 
 module.exports.help = {
-    name: "tempmute"
+    name: "tempmute",
+    triggers: "tempmute",
+    description: "Temporarily mute a member",
+    role: "Clan Council"
 }

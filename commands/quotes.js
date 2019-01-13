@@ -77,5 +77,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Random Quote",
     triggers: "quotes",
-    description: `Pulls a random quote from the database, add a quote with !${this.triggers} add <quote>`
+    description: `Pulls a random quote from the database, add a quote with !quotes add <quote>`,
+    role: "everyone"
 }

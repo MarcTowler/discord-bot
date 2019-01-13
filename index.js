@@ -23,6 +23,7 @@ fs.readdir("./commands", (err, files) => {
 
         if(typeof props.help === "undefined")
         {} else {
+            console.log(`Loaded ${props.help.name}`);
             bot.commands.set(props.help.triggers, props);
         }
     });

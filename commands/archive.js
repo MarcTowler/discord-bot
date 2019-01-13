@@ -73,5 +73,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "archive",
     triggers: "archive",
-    description: "An event archive command for G4G"
+    description: "An event archive command for G4G",
+    role: "officer"
 }

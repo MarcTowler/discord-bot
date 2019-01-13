@@ -27,5 +27,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Points Registration",
     triggers: "pointsregister",
-    description: `A way to link your discord with your Bungie username to be able to use !points, the syntax is !${this.triggers} <D2 Name>`
+    description: `A way to link your discord with your Bungie username to be able to use !points, the syntax is !pointsregister <D2 Name>`,
+    role: "everyone"
 }

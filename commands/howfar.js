@@ -96,5 +96,6 @@ more objects
 module.exports.help = {
     name: "How far",
     triggers: "howfar",
-    description: `See how far you are from ranking up, the syntax is !${this.triggers} <PvE/PvP>`
+    description: `See how far you are from ranking up, the syntax is !howfar <PvE/PvP>`,
+    role: "everyone"
 }

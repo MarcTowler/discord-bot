@@ -43,5 +43,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Add Points",
     triggers: "addpoints",
-    description: `Add points to a user in either the PvP or PvE ladders, the syntax is !${this.triggers} <Ladder Name> <Username> <amount>`
+    description: "Add points to a user in either the PvP or PvE ladders, the syntax is !$addpoints <Ladder Name> <Username> <amount>",
+    role: "everyone"
 }

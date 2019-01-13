@@ -22,5 +22,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Roulette",
     triggers: "roulette",
-    description: "A Russian Roulette mini game"
+    description: "A Russian Roulette mini game",
+    role: "everyone"
 }

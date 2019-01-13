@@ -34,5 +34,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "How old in Discord",
     triggers: "howold",
-    description: `See how long you have been in the Clan's Discord for`
+    description: `See how long you have been in the Clan's Discord for`,
+    role: "everyone"
 }

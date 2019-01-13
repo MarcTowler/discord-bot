@@ -8,5 +8,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Request an Event",
     triggers: "eventrequest",
-    description: `Request an event to be run for you by the Officers`
+    description: `Request an event to be run for you by the Officers`,
+    role: "everyone"
 }
