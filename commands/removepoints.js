@@ -43,5 +43,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Remove Points",
     triggers: "removepoints",
-    description: `Remove points from a user in either the PvP or PvE ladders, the syntax is !${this.triggers} <Ladder Name> <Username> <amount>`
+    description: "Remove points from a user in either the PvP or PvE ladders, the syntax is !removepoints <Ladder Name> <Username> <amount>",
+    role: "Clan Council"
 }

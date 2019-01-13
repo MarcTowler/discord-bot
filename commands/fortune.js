@@ -8,5 +8,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "fortune",
     triggers: "fortune",
-    description: "Get a fortune cookie quote"
+    description: "Get a fortune cookie quote",
+    role: "everyone"
 }

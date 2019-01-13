@@ -1,43 +1,70 @@
-const Discord = require("discord.js");
+const fs = require("fs");
+const Discord = require('discord.js');
 
 module.exports.run = async(bot, message, args) => {
+    fs.readdir("./commands", (err, files) => {
 
+        let command = [];
+        let sCommand = '\n';
 
-    return message
-        .author
-        .send(
-            {
-                embed:
+        if(err) console.log(err);
+
+        let jsfile = files.filter(f => f.split(".").pop() === "js")
+
+        if(jsfile.length <= 0)
+        {
+            console.log("Couldn't find any commands");
+
+            return;
+        }
+
+        jsfile.forEach((f, i) => {
+                let props = require(`./${f}`);
+
+                if (typeof props.help === "undefined") {
+                    console.log("undefined");
+
+                } else {
+                    // NEED TO NOW LOOK FOR PROPS.HELP.ROLE AND IF IT IS NONE, PROCEED, IF IT IS A ROLE THEN CHECK AGAINST USER ROLE BEFORE ADDING
+                    if(props.help.role === "none")
+                    {} else if(props.help.role !== 'everyone')
                     {
-                    color: 0x00ff00,
-                    author:
+                        if(props.help.role == "Clan Council")
                         {
-                            name: `Let Me Help You!`,
-                            icon_url: message.author.avatarURL
-                            //icon_url: "https://cdn2.iconfinder.com/data/icons/free-basic-icon-set-2/300/6-128.png",
-                        },
+                            let councilRole = message.guild.roles.find(role => role.name === "Clan Council");
+                            if (message.member.roles.has(councilRole.id)) {
+                                sCommand = sCommand + `**${props.help.name}** - ${props.help.description}\n`;
+                                command[props.help.name] = props.help.description;
+                            }
+                        } else if(props.help.role == "Officer") {
+                            let officerRole = message.guild.roles.find(role => role.name === "Officer");
 
-                    description: `
-**8 Ball** - !8ball <question> \n
-**Add Points (Council Only)** - !addpoints <Points> <Username> <PvE/PvP>\n
-**Archive (Officers Only)** - !archive <Guilded ID> <D2 ID> <status>\n
-**Clear (Council Only)** - !clear <amount>\n
-**Event Request** - !eventrequest \n
-**Flip** - !flip <heads/tails>\n
-**Fortune** - !fortune \n
-**How Old** - !howold <(optional) Username> \n
-**Points** - !points <PvE/PvP> <(optional) Username> \n
-**Points Register** - !pointsregister <D2 name> \n
-**Remove Points (Council Only)** - !removepoints <amount> <Username> <PvE/PvP> \n
-**Roulette** - !roulette \n
-**Rock Paper Scissors** - !rps <Rock/Paper/Scissors>`
+                            if (message.member.roles.has(officerRole.id)) {
+                                sCommand = sCommand + `**${props.help.name}** - ${props.help.description}\n`;
+                                command[props.help.name] = props.help.description;
+                            }
+                        }
+                    } else {
+                        //console.log(props.help.name);
+                        //console.log(`${props.help.name} - ${props.help.description}`);
+                        sCommand = sCommand + `**${props.help.name}** - ${props.help.description}\n`;
+                        command[props.help.name] = props.help.description;
                     }
-            }
-        );
+                }
+        });
+
+        let oEmbed = new Discord.RichEmbed()
+            .setAuthor("TheSpeakerBot")
+            .setTitle("Help File")
+            .setColor(0x00ff00)
+            .setDescription(sCommand);
+        return message.author.send(oEmbed);
+    });
 }
 
 module.exports.help = {
     name: "Halp",
     triggers: "helpme",
-    description: `Lets help the user out`
+    description: `Lets help the user out`,
+    role: "everyone"
 }

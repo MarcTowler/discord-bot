@@ -4,5 +4,6 @@
     module.exports = addtwo;
 
 module.exports.help = {
-    name: "addtwo"
+    name: "addtwo",
+    role: "none"
 }

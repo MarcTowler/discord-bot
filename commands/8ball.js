@@ -29,5 +29,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "8ball",
     triggers: "8ball",
-    description: "Get a prediction for your yes or no question"
+    description: "Get a prediction for your yes or no question",
+    role: "everyone"
 }

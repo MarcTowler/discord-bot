@@ -9,5 +9,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "uptime",
     triggers: "uptime",
-    description: "Know how long the bot has been working without a break"
+    description: "Know how long the bot has been working without a break",
+    role: "everyone"
 }

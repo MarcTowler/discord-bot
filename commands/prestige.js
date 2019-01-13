@@ -44,5 +44,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Prestige",
     triggers: "prestige",
-    description: `Either add or remove a prestige rank to a player in either the PvE or PvP ladders, the syntax is !${this.triggers} <add/remove> <Ladder Name> <Username>`
+    description: `Either add or remove a prestige rank to a player in either the PvE or PvP ladders, the syntax is !prestige <add/remove> <Ladder Name> <Username>`,
+    role: "Clan Council"
 }

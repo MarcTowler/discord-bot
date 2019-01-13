@@ -25,5 +25,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Clear Messages",
     triggers: "clear",
-    description: `Removes the specified number of messages from the channel it is called from. Command usage !${this.triggers} <number of messages>`
+    description: "Removes the specified number of messages from the channel it is called from. Command usage !clear <number of messages>",
+    role: "Clan Council"
 };

@@ -29,5 +29,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "poll",
     triggers: "poll",
-    description: "Create a poll! Votes handled via emoji reaction"
+    description: "Create a poll! Votes handled via emoji reaction",
+    role: "everyone"
 }

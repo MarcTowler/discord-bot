@@ -22,5 +22,6 @@ module.exports.run = async(bot, message, args) => {
 module.exports.help = {
     name: "Rock Paper Scissors",
     triggers: "rps",
-    description: `A good old fashioned game of Rock, Paper, Scissors, play by using !${this.triggers} <rock/paper/scissors>`
+    description: "A good old fashioned game of Rock, Paper, Scissors, play by using !rps <rock/paper/scissors>",
+    role: "everyone"
 };

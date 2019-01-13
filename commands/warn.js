@@ -57,5 +57,8 @@ module.exports.run = async(bot, message, args) => {
 }
 
 module.exports.help = {
-    name: "warn"
+    name: "warn",
+    triggers: "warn",
+    description: "Add a warning to a user",
+    role: "Officer"
 }
