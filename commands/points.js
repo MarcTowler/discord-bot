@@ -106,19 +106,33 @@ module.exports.run = async(bot, message, args) => {
                     });
 
                     resp.on('end', () => {
-                        message.channel.send({embed: {
-                                color: 0x00ff00,
-                                author: {
-                                    name: message.member.displayName,
-                                    icon_url: message.author.avatarURL
-                                },
-                                fields: [{
-                                    //name: `${args[1]} - ${message.author.username}`,
-                                    name: `${args[1]}`,
-                                    value: data
-                                }]
-                            }
-                        });
+                        var REmbed;
+
+                        args[0] = (args[0] === "pve") ? "PvE" : "PvP";
+
+                        if(data.startsWith("Sorry but", data))
+                        {
+                            REmbed = new Discord.RichEmbed()
+                                .setColor(0x00ff00)
+                                .setTitle(`${args[1]}'s ${args[0]} stats`)
+                                .setDescription(data);
+                        } else {
+                            let dataArr = data.split(', ');
+                            let rank = dataArr[1].split(': ')[1];
+                            let points = dataArr[2].split(' ')[0];
+                            let badge = `https://clanevents.net/images/G4G/rank${Math.floor(points / 1500)}.png`;
+                            let prestige = dataArr[0].split(': ')[1];
+
+                            REmbed = new Discord.RichEmbed()
+                                .setThumbnail(badge)
+                                .setColor(0x00ff00)
+                                .setTitle(`${args[1]}'s ${args[0]} stats`)
+                                .addField(`${args[0]} Rank`, rank)
+                                .addField(`${args[0]} points`, points)
+                                .addField(`Number of ${args[0]} Prestiges`, prestige);
+                        }
+                        message.channel.send(REmbed);
+
                     });
                     }).on("error", (err) => {
                         message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
@@ -140,19 +154,30 @@ module.exports.run = async(bot, message, args) => {
                     });
 
                     resp.on('end', () => {
-                        message.channel.send({embed: {
-                                color: 0x00ff00,
-                                author: {
-                                    name: message.member.displayName,
-                                    icon_url: message.author.avatarURL
-                                },
-                                fields: [{
-                                    //name: `${args[1]} - ${message.author.username}`,
-                                    name: `${args[0]} points`,
-                                    value: data
-                                }]
-                            }
-                        });
+                        var REmbed;
+
+                        if(data.startsWith("Sorry but", data))
+                        {
+                            REmbed = new Discord.RichEmbed()
+                                .setColor(0x00ff00)
+                                .setTitle(`${message.member.displayName}'s ${args[0]} stats`)
+                                .setDescription(data);
+                        } else {
+                            let dataArr = data.split(', ');
+                            let rank = dataArr[1].split(': ')[1];
+                            let points = dataArr[2].split(' ')[0];
+                            let badge = `https://clanevents.net/images/G4G/rank${Math.floor(points / 1500)}.png`;
+                            let prestige = dataArr[0].split(': ')[1];
+
+                            REmbed = new Discord.RichEmbed()
+                                .setThumbnail(badge)
+                                .setColor(0x00ff00)
+                                .setTitle(`${message.member.displayName}'s ${args[0]} stats`)
+                                .addField(`${args[0]} Rank`, rank)
+                                .addField(`${args[0]} points`, points)
+                                .addField(`Number of ${args[0]} Prestiges`, prestige);
+                        }
+                        message.channel.send(REmbed);
                     });
                 }).on("error", (err) => {
                     message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
