@@ -10,7 +10,7 @@ module.exports.run = async(bot, message, args) => {
     }
     
     //Lets make sure they used pve or pvp for the right leaderboards...
-    if(args[0].toLowerCase() === "pvp" || args[0].toLowerCase() === "pve")
+    if(args[0].toLowerCase() === "pvp" || args[0].toLowerCase() === "pve" || args[0].toLowerCase() === "gambit")
     {
         switch (args.length)
         {

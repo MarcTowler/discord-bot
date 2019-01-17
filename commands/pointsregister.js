@@ -7,7 +7,7 @@ module.exports.run = async(bot, message, args) => {
     {
         return message.channel.send(`Something did not look right there ${message.member.displayName}, please read the description:\n ${this.help.description}`);
     }
-    https.get(`https://api.itslit.uk/G4g/register/${message.member.displayName}/${args[0]}`, (resp) => {
+    https.get(`https://api.itslit.uk/G4G/register/${message.member.displayName}/${args[0]}`, (resp) => {
         let data = '';
 
         resp.on('data', (chunk) => {
