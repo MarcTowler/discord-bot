@@ -83,7 +83,6 @@ bot.on("message", async message => {
 bot.on("guildMemberAdd", member => {
     let REmbed = new Discord.RichEmbed()
         .setThumbnail("https://i.imgur.com/IdGhpsp.png")
-        //.setAuthor(`Welcome to G4G ${member.user.username}`)
         .setColor(5233919)
         .setTitle(`To gain membership and full access to the G4G server, please perform the following steps:`)
         .setDescription(`1: Set your Discord nickname for this server to your Bungie gamer tag or B.net ID\n` +
