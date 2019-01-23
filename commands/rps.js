@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const https = require('https');
 
 module.exports.run = async(bot, message, args) => {
-    https.get(`https://api.itslit.uk/games/rpg/${args[0]}/${message.member.displayName}`, (resp) => {
+    https.get(`https://api.itslit.uk/games/rps/${args[0]}/${message.member.displayName}`, (resp) => {
         let data = '';
 
         resp.on('data', (chunk) => {

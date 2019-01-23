@@ -6,7 +6,7 @@ module.exports.run = async(bot, message, args) => {
     {
         return message
             .channel
-            .send(`Something didn't quite go right, !${this.help.triggers} requires PvE or PvP as a minimum argument. Try again with !${this.help.triggers} PvE or !${this.help.triggers} PvP`);
+            .send(`Something didn't quite go right, !points requires PvE or PvP as a minimum argument. Try again with !points PvE or !points PvP`);
     }
     
     //Lets make sure they used pve or pvp for the right leaderboards...
@@ -19,9 +19,10 @@ module.exports.run = async(bot, message, args) => {
                 //lets check for top10
                 if(args[1].toLowerCase() === 'top10')
                 {
-                    console.log(message.author.tag);
+                    //console.log(message.author.tag);
                     //https.get(`https://api.itslit.uk/G4G/getList/${args[1]}/${args[0]}/`, (resp) => {
-                    https.get(`https://api.itslit.uk/G4G/getList/all/${args[1]}/${args[0]}`, (resp) => {
+                    //https.get(`https://api.itslit.uk/G4G/getList/all/${args[1]}/${args[0]}`, (resp) => {
+                    https.get(`https://api.itslit.uk/G4G/getList/all/${args[0]}/${args[1]}`, (resp) => {
 
                         args[0] = (args[0].toLowerCase() === 'pve') ? 'PvE' : 'PvP';
 
@@ -40,7 +41,7 @@ module.exports.run = async(bot, message, args) => {
                                 return element > message.member.displayName
                             });
 
-                            let pos = newvalues.findIndex(name => name.Name === message.author.username);
+                            let pos = newvalues.findIndex(name => name.Name === message.member.displayName);
 
                             if((pos + 1) > 10) {
                                 message.channel.send({
