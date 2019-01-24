@@ -38,30 +38,17 @@ const activity_list = [
 
 
 bot.on("ready", async () => {
-    console.log(`${bot.user.username} is now online!`);
+    console.log(`${bot.user.username} is now online for ${bot.guilds.size} servers!`);
   
     setInterval(() => {
         const index = Math.floor(Math.random() * (activity_list.length - 1) + 1); // generates a random number between 1 and the length of the activities array list (in this case 5).
         bot.user.setActivity(activity_list[index]); // sets bot's activities to one of the phrases in the arraylist.
     }, 60000);
-
-    Notify_chan = bot.channels.find('id', '309597400434212865'); //Get the channel ID for #hellbot_thunderdome
 });
-
-setInterval(function() {
-   let d = new Date();
-   if(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0)
-   {
-       console.log(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0);
-   } else {
-       console.log(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0);
-   }
-    //Notify_chan.sendMessage('g upcoming');
-}, 60 * 1000 * 60 * 72);
 
 bot.on("message", async message => {
     if(message.author.bot) return;
-    if(message.channel.type == "dm") return;
+    if(message.channel.type === "dm") return;
 
     if(config.debug === true && message.author.id !== '131526937364529152') return;
     let prefix = config.prefix;
@@ -88,7 +75,8 @@ bot.on("guildMemberAdd", member => {
         .setDescription(`1: Set your Discord nickname for this server to your Bungie gamer tag or B.net ID\n` +
             `2: Confirm your age\n` +
             `3: Confirm the Bungie Clan you have joined, eg G4G Orion\n` +
-            `4: Accept the invitation to join our Guilded page, authorizing with your Discord details`);
+            `4: Accept the invitation to join our Guilded page, authorizing with your Discord details\n` +
+            `5: Make sure you have \`Allow Direct Messages from Server Members\` turned on, this can be found in settings->Privacy and Safety`);
 
     if(member.guild.id === "220467406559117312") { //G4G
     //if(member.guild.id === "236484268237258752") { //GamingHaven
