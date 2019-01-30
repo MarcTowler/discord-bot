@@ -1,7 +1,11 @@
 const Discord = require("discord.js");
+let applicationQuestions = require("../application-questions.js");
 
+module.exports.dm = async(bot, message) => {
+    console.log("yay");
+}
 module.exports.run = async(bot, message, args) => {
-    //return message.channel.send('Please click the following link - https://goo.gl/TqDv6d');
+
 }
 
 module.exports.help = {
