@@ -6,10 +6,10 @@ module.exports.run = async(bot, message, args) => {
 	let playstationmembers = message.guild.roles.get(playstation).members;
 	
 	let xbox = "365412296945565706";
-	let xboxmembers = message.guild.roles.get(playstation).members;
+	let xboxmembers = message.guild.roles.get(xbox).members;
 	
 	let pc = "375993110846636033";
-	let pcmembers = message.guild.roles.get(playstation).members;
+	let pcmembers = message.guild.roles.get(pc).members;
 	
 	message.channel.send({
 	embed: {
