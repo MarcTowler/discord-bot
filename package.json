@@ -28,6 +28,8 @@
     "enmap": "^4.6.5",
     "express": "^4.16.4",
     "fortune-tweetable": "^1.0.0",
+    "google-spreadsheet": "^2.0.7",
+    "googleapis": "^27.0.0",
     "mocha": "^5.2.0",
     "moment": "^2.23.0",
     "moment-duration-format": "^2.2.2",
