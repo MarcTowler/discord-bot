@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const fs = require("fs");
 const config = require('./botconfig.json');
+
 let applicationQuestions = require("./application-questions.js");
 
 const bot = new Discord.Client({disableEveryone: true});
@@ -114,7 +115,20 @@ bot.on("ready", async () => {
         const index = Math.floor(Math.random() * (activity_list.length - 1) + 1); // generates a random number between 1 and the length of the activities array list (in this case 5).
         bot.user.setActivity(activity_list[index]); // sets bot's activities to one of the phrases in the arraylist.
     }, 60000);
+
+    Notify_chan = bot.channels.find('id', '309597400434212865'); //Get the channel ID for #hellbot_thunderdome
 });
+
+setInterval(function() {
+   let d = new Date();
+   if(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0)
+   {
+       console.log(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0);
+   } else {
+       console.log(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0);
+   }
+    //Notify_chan.sendMessage('g upcoming');
+}, 60 * 1000 * 60 * 72);
 
 bot.on("message", async message => {
     if(message.author.bot) return;
