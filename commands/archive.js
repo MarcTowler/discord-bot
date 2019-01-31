@@ -23,10 +23,6 @@ module.exports.run = async(bot, message, args) => {
 
                 //the whole response is here
                 resp.on('end', () => {
-                    /*if(data.includes('The event'))
-                    {
-                        message.delete().catch(O_o=>{});
-                    }*/
                     message.channel.send(data);
                 });
             }).on("error", (err) => {
@@ -50,10 +46,6 @@ module.exports.run = async(bot, message, args) => {
 
                 //the whole response is here
                 resp.on('end', () => {
-                    /*if(data.includes('The event'))
-                    {
-                        message.delete().catch(O_o=>{});
-                    }*/
                     message.channel.send(data);
                 });
             }).on("error", (err) => {
