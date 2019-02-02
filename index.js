@@ -38,8 +38,8 @@ const activity_list = [
 ];
 
 let usersApplicationStatus = [];
-//let userToSubmitApplicationsTo = "416354331592359936";
-let userToSubmitApplicationsTo = "520182741959180288"; //#web_team
+let userToSubmitApplicationsTo = "416354331592359936";
+//let userToSubmitApplicationsTo = "520182741959180288"; //#web_team
 
 const applicationFormCompleted = (client, data) => {
     let REmbed = new Discord.RichEmbed()
@@ -68,13 +68,23 @@ const applicationFormCompleted = (client, data) => {
     if(data.answers[0].toLowerCase() === 'xbox')
     {
         client.channels.get(userToSubmitApplicationsTo).send(`**BEHOLD** <@&365412296945565706> you have a new event request!`)
-            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed));
+            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed).then(async (embedMessage) => {
+                await embedMessage.react('✅');
+                await embedMessage.react('❎');
+            }));
     } else if(data.answers[0].toLowerCase() === 'ps4') {
         client.channels.get(userToSubmitApplicationsTo).send(`**BEHOLD** <@&370195805610573824> you have a new event request!`)
-            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed));
+            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed)
+                .then(async (embedMessage) => {
+                    await embedMessage.react('✅');
+                    await embedMessage.react('❎');
+                }));
     } else {
-        client.channels.get(userToSubmitApplicationsTo).send(`**BEHOLD** <@&370195805610573824> you have a new event request!`)
-            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed));
+        client.channels.get(userToSubmitApplicationsTo).send(`**BEHOLD** <@&375993110846636033> you have a new event request!`)
+            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed).then(async (embedMessage) => {
+                await embedMessage.react('✅');
+                await embedMessage.react('❎');
+            }));
     }
 
     let sheets = require('./utils/sheets.js');
@@ -93,6 +103,14 @@ const sendUserApplyForm = message => {
         usersApplicationStatus.push({id: message.author.id, currentStep: 0, answers: [], user: message.author});
     } else {
         message.author.send(applicationQuestions[user.currentStep]);
+
+        if(user.currentStep >= applicationQuestions.length)
+        {
+            message.author.send("Thank you for submitting an event request!");
+            cancelUserApplicationForm(message);
+        } else {
+            message.author.send(applicationQuestions[user.currentStep]);
+        }
     }
 };
 
@@ -140,7 +158,7 @@ bot.on("message", async message => {
                     {
                         message.author.send(`Please enter a valid date, not ${message.content}`);
                         return message.author.send(applicationQuestions[1]);
-                    } else if((Date.parse(message.content) - Date.now()) <= 86400000) {
+                    } else if((Date.parse(message.content) - Date.now()) <= 0) {
                         message.author.send(`Please set a date at least 24 hours in the future!`);
                         return message.author.send(applicationQuestions[1]);
                     }
@@ -236,11 +254,11 @@ bot.on("message", async message => {
             //console.log(user.currentStep);
             //console.log(user.answers);
 
-            if (user.currentStep >= applicationQuestions.length) {
+            if (user.currentStep >= 10) {
                 applicationFormCompleted(bot, user);
                 message.author.send("Congratulations your event request has been sent!");
             } else {
-                console.log('content is: ' + message.content + " and step is: " + user.currentStep);
+                //console.log('content is: ' + message.content + " and step is: " + user.currentStep);
                 if(user.currentStep === 5 && message.content.toLowerCase() !== 'raid')
                 {
                     user.currentStep++;
@@ -295,7 +313,7 @@ bot.on("guildMemberAdd", member => {
     if(member.guild.id === "220467406559117312" && config.debug === false) { //G4G
         member.guild.channels.get('525270659438215178').send(`Welcome to G4G <@${member.user.id}>`)
             .then(message =>
-                member.guild.channels.get('295671375773958145').send(REmbed))
+                member.guild.channels.get('525270659438215178').send(REmbed))
             .then(msg => member.guild.channels.get('538644586394812416').send(`oi ***fuckers*** stop chattin shit and get yo bitch asses into #pending_pool and welcome this mofo named <@${member.user.id}>`));
     }
 });

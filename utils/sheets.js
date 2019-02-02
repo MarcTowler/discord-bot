@@ -4,17 +4,18 @@ const doc = new google('1JRlA4XE1qTl1hPWFisElshJsXxehb0xzbPytZ1bBArw');
 
 module.exports = async(details) => {
     let ts = new Date();
+
     doc.useServiceAccountAuth(creds, function (err) {
         /*doc.getRows(1, function(err, rows) {
             console.log(rows.length);
         });*/
-        if(details.length === 9) {
+        if(details.answers.length === 9) {
             doc.addRow(1, { //raid
-                Timestamp: ts.getDate() + " " + ts.getTime(),
+                Timestamp: new Date(ts.getTime()).toUTCString(),
                 Member_Name: details.user.username,
                 Platform: details.answers[0].toUpperCase(),
                 Event_Date: details.answers[1],
-                Time: details.answers[2],
+                Time: `'${details.answers[2]}`,
                 Game: (details.answers[3].toLowerCase() === 'd2') ? "Destiny 2" : "Destiny 1",
                 Activity: details.answers[4],
                 Raid_Type: details.answers[5],
@@ -26,13 +27,13 @@ module.exports = async(details) => {
                     console.log(err);
                 }
             });
-        } else if(details.length === 8) { //crucible
+        } else if(details.answers.length === 8) { //crucible
             doc.addRow(1, {
-                Timestamp: ts.getDate() + " " + ts.getTime(),
+                Timestamp: new Date(ts.getTime()).toUTCString(),
                 Member_Name: details.user.username,
                 Platform: details.answers[0].toUpperCase(),
                 Event_Date: details.answers[1],
-                Time: details.answers[2],
+                Time: `'${details.answers[2]}`,
                 Game: (details.answers[3].toLowerCase() === 'd2') ? "Destiny 2" : "Destiny 1",
                 Activity: details.answers[4],
                 Raid_Type: details.answers[5],
@@ -44,19 +45,19 @@ module.exports = async(details) => {
                     console.log(err);
                 }
             });
-        } else if(details.length === 7) { //crucible, gambit, nightfall, milestones
+        } else if(details.answers.length === 7) { //crucible, gambit, nightfall, milestones
             doc.addRow(1, {
-                Timestamp: ts.getDate() + " " + ts.getTime(),
+                Timestamp: new Date(ts.getTime()).toUTCString(),
                 Member_Name: details.user.username,
                 Platform: details.answers[0].toUpperCase(),
                 Event_Date: details.answers[1],
-                Time: details.answers[2],
+                Time: `'${details.answers[2]}`,
                 Game: (details.answers[3].toLowerCase() === 'd2') ? "Destiny 2" : "Destiny 1",
                 Activity: details.answers[4],
-                Raid_Type: " ",
+                Raid_Type: details.answers[5],
                 Difficulty: " ",
                 Ability_Preference: " ",
-                Comments_Notes: details.answers[5]
+                Comments_Notes: details.answers[6]
             }, function (err) {
                 if (err) {
                     console.log(err);
@@ -64,22 +65,26 @@ module.exports = async(details) => {
             });
         } else {
             doc.addRow(1, {
-                Timestamp: ts.getDate() + " " + ts.getTime(),
+                Timestamp: new Date(ts.getTime()).toUTCString(),
                 Member_Name: details.user.username,
                 Platform: details.answers[0].toUpperCase(),
                 Event_Date: details.answers[1],
-                Time: details.answers[2],
-                Game: (details.answers[3] === 'D2') ? "Destiny 2" : "Destiny 1",
+                Time: `'${details.answers[2]}`,
+                Game: (details.answers[3].toLowerCase() === 'd2') ? "Destiny 2" : "Destiny 1",
                 Activity: details.answers[4],
                 Raid_Type: " ",
-                Difficulty: details.answers[5],
-                Ability_Preference: details.answers[6],
-                Comments_Notes: details.answers[7]
+                Difficulty: " ",
+                Ability_Preference: " ",
+                Comments_Notes: details.answers[5],
             }, function (err) {
                 if (err) {
                     console.log(err);
                 }
             });
+        }
+        if(err)
+        {
+            throw err;
         }
     });
 }
