@@ -7,7 +7,11 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=8"
   },
   "repository": {
     "type": "git",
@@ -20,19 +24,23 @@
   },
   "homepage": "https://github.com/MarcTowler/discord-bot#readme",
   "dependencies": {
-    "chai": "^4.2.0",
-    "chalk": "^2.4.2",
+    "better-sqlite-pool": "github:eslachance/better-sqlite-pool",
+    "chalk": "^2.4.1",
     "countdown": "^2.6.0",
     "dateformat": "^3.0.3",
     "discord.js": "^11.4.2",
-    "enmap": "^4.6.5",
+    "enmap": "^4.3.2",
     "express": "^4.16.4",
     "fortune-tweetable": "^1.0.0",
     "google-spreadsheet": "^2.0.7",
-    "googleapis": "^27.0.0",
-    "mocha": "^5.2.0",
-    "moment": "^2.23.0",
+    "klaw": "^2.1.1",
+    "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
-    "ms": "^2.1.1"
+    "ms": "^2.1.1",
+    "node-gyp": "^3.8.0",
+    "readline-sync": "^1.4.9"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.8.2"
   }
 }

@@ -1,27 +1,34 @@
-const Discord = require("discord.js");
+const Command = require("../base/Command.js");
+const { version } = require("discord.js");
+const https = require('https');
 
-module.exports.run = async(bot, message, args) => {
-    if(args.length < 4)
-    {
-        return message.channel.send(`Sorry ${message.member.displayName} but a suggestion needs to form a sentence!`);
+class suggest extends Command {
+    constructor(client) {
+        super(client, {
+            name: "Suggestions",
+            usagge: "suggest",
+            description: "Make a suggestion with !suggest <SUGGESTION HERE>",
+            role: "everyone"
+        });
     }
 
-    let REmbed = new Discord.RichEmbed()
-        .setAuthor(`${message.member.displayName} suggested the following:`)
-        .setColor(0x00ff00)
-        .addField('Suggestion', args.join(" "))
-        .addField('Voting', 'Please vote with yes (✅) or no (❎)');
+    async run(message, args, level) { // eslint-disable-line no-unused-vars
+        if (args.length < 4) {
+            return message.channel.send(`Sorry ${message.member.displayName} but a suggestion needs to form a sentence!`);
+        }
 
-    return message.guild.channels.get('497077179755003914').send(REmbed)
-        .then(async (reactions) => {
-            await reactions.react('✅');
-            await reactions.react('❎');
-        });
+        let REmbed = new Discord.RichEmbed()
+            .setAuthor(`${message.member.displayName} suggested the following:`)
+            .setColor(0x00ff00)
+            .addField('Suggestion', args.join(" "))
+            .addField('Voting', 'Please vote with yes (✅) or no (❎)');
+
+        return message.guild.channels.get('497077179755003914').send(REmbed)
+            .then(async (reactions) => {
+                await reactions.react('✅');
+                await reactions.react('❎');
+            });
+    }
 }
 
-module.exports.help = {
-    name: "Suggestions",
-    triggers: "suggest",
-    description: "Make a suggestion with !suggest <SUGGESTION HERE>",
-    role: "everyone"
-}
+module.exports = suggest;

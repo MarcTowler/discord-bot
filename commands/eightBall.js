@@ -1,28 +1,33 @@
 const Command = require("../base/Command.js");
 const { version } = require("discord.js");
-const https = require('http');
+const https = require('https');
 
-class flip extends Command {
+class eightBall extends Command {
     constructor(client) {
         super(client, {
-            name: "Coin Toss",
-            usage: "flip",
-            description: "A Coin Toss mini game, usage is !flip <heads/tails>",
+            name: "8ball",
+            usage: "8ball",
+            description: "Get a prediction for your yes or no question",
             role: "everyone"
         });
     }
 
     async run(message, args, level) { // eslint-disable-line no-unused-vars
-        https.get(`https://api.itslit.uk/games/cointoss/${message.member.displayName}/${args[0]}`, (resp) => {
-
+        if (args.length === 0) {
+            return message.channel.send(":8ball: You need to actually ask me a question! :8ball:")
+        }
+        console.log(args);
+        https.get('https://api.itslit.uk/games/eightball/' + message.author.tag, (resp) => {
             let data = '';
 
+            //a chunk of data has been received
             resp.on('data', (chunk) => {
                 data += chunk;
             });
 
+            //the whole response is here
             resp.on('end', () => {
-                message.channel.send(data);
+                message.channel.send(':8ball: ' + data + ' :8ball:');
             });
         }).on("error", (err) => {
             message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
@@ -34,4 +39,4 @@ class flip extends Command {
     }
 }
 
-module.exports = flip;
+module.exports = eightBall;

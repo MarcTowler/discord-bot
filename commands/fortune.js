@@ -1,13 +1,20 @@
-const Discord = require("discord.js");
-const fortune = require('fortune-tweetable');
+const Command = require("../base/Command.js");
+const { version } = require("discord.js");
+const fortuneCookie = require('fortune-tweetable');
 
-module.exports.run = async(bot, message, args) => {
-    return message.channel.send(fortune.fortune());
+class fortune extends Command {
+    constructor(client) {
+        super(client, {
+            name: "Fortune Cookie",
+            usage: "fortune",
+            description: "Read a fortune cookie!",
+            role: "everyone"
+        });
+    }
+
+    async run(message, args, level) { // eslint-disable-line no-unused-vars
+        return message.channel.send(fortuneCookie.fortune());
+    }
 }
 
-module.exports.help = {
-    name: "fortune",
-    triggers: "fortune",
-    description: "Get a fortune cookie quote",
-    role: "everyone"
-}
+module.exports = fortune;

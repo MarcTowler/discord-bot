@@ -1,339 +1,213 @@
-const Discord = require('discord.js');
-const fs = require("fs");
-const config = require('./botconfig.json');
+const { Client, Collection } = require("discord.js");
+const { promisify } = require("util");
+const readdir = promisify(require("fs").readdir);
+const Enmap = require("enmap");
+const klaw = require("klaw");
+const path = require("path");
 
-let applicationQuestions = require("./application-questions.js");
 
-const bot = new Discord.Client({disableEveryone: true});
-bot.commands = new Discord.Collection();
+class Bot extends Client {
+    constructor (options) {
+        super(options);
 
-fs.readdir("./commands", (err, files) => {
-
-    if(err) console.log(err);
-
-    let jsfile = files.filter(f => f.split(".").pop() === "js")
-
-    if(jsfile.length <= 0)
-    {
-        console.log("Couldn't find any commands");
-
-        return;
+        this.config = require("./config.js");
+        this.commands = new Collection();
+        this.aliases = new Collection();
+        this.settings = new Enmap({ name: "settings", cloneLevel: "deep", fetchAll: false, autoFetch: true });
+        this.logger = require("./modules/Logger");
+        this.wait = require("util").promisify(setTimeout);
     }
 
-    jsfile.forEach((f, i) => {
-        let props = require(`./commands/${f}`);
+    /*
+    PERMISSION LEVEL FUNCTION
+    This is a very basic permission system for commands which uses "levels"
+    "spaces" are intentionally left black so you can add them if you want.
+    NEVER GIVE ANYONE BUT OWNER THE LEVEL 10! By default this can run any
+    command including the VERY DANGEROUS `eval` command!
+    */
+    permlevel (message) {
+        let permlvl = 0;
 
-        if(typeof props.help === "undefined")
-        {} else {
-            console.log(`Loaded ${props.help.name}`);
-            bot.commands.set(props.help.triggers, props);
+        const permOrder = this.config.permLevels.slice(0).sort((p, c) => p.level < c.level ? 1 : -1);
+
+        while (permOrder.length) {
+            const currentLevel = permOrder.shift();
+            if (message.guild && currentLevel.guildOnly) continue;
+            if (currentLevel.check(message)) {
+                permlvl = currentLevel.level;
+                break;
+            }
+        }
+        return permlvl;
+    }
+
+    /*
+    COMMAND LOAD AND UNLOAD
+
+    To simplify the loading and unloading of commands from multiple locations
+    including the index.js load loop, and the reload function, these 2 ensure
+    that unloading happens in a consistent manner across the board.
+    */
+
+    loadCommand (commandPath, commandName) {
+        try {
+            const props = new (require(`${commandPath}${path.sep}${commandName}`))(this);
+            this.logger.log(`Loading Command: ${props.help.name}. 👌`, "log");
+            props.conf.location = commandPath;
+            if (props.init) {
+                props.init(this);
+            }
+            this.commands.set(props.help.name, props);
+            props.conf.aliases.forEach(alias => {
+                this.aliases.set(alias, props.help.name);
+            });
+            return false;
+        } catch (e) {
+            return `Unable to load command ${commandName}: ${e}`;
+        }
+    }
+
+    async unloadCommand (commandPath, commandName) {
+        let command;
+        if (this.commands.has(commandName)) {
+            command = this.commands.get(commandName);
+        } else if (this.aliases.has(commandName)) {
+            command = this.commands.get(this.aliases.get(commandName));
+        }
+        if (!command) return `The command \`${commandName}\` doesn"t seem to exist, nor is it an alias. Try again!`;
+
+        if (command.shutdown) {
+            await command.shutdown(this);
+        }
+        delete require.cache[require.resolve(`${commandPath}${path.sep}${commandName}.js`)];
+        return false;
+    }
+
+    /* SETTINGS FUNCTIONS
+    These functions are used by any and all location in the bot that wants to either
+    read the current *complete* guild settings (default + overrides, merged) or that
+    wants to change settings for a specific guild.
+    */
+
+    // getSettings merges the client defaults with the guild settings. guild settings in
+    // enmap should only have *unique* overrides that are different from defaults.
+    getSettings (guild) {
+        const defaults = this.config.defaultSettings || {};
+        const guildData = this.settings.get(guild.id) || {};
+        const returnObject = {};
+        Object.keys(defaults).forEach((key) => {
+            returnObject[key] = guildData[key] ? guildData[key] : defaults[key];
+        });
+        return returnObject;
+    }
+
+    // writeSettings overrides, or adds, any configuration item that is different
+    // than the defaults. This ensures less storage wasted and to detect overrides.
+    writeSettings (id, newSettings) {
+        const defaults = this.settings.get("default");
+        let settings = this.settings.get(id);
+        if (typeof settings != "object") settings = {};
+        for (const key in newSettings) {
+            if (defaults[key] !== newSettings[key]) {
+                settings[key] = newSettings[key];
+            } else {
+                delete settings[key];
+            }
+        }
+        this.settings.set(id, settings);
+    }
+
+    /*
+    SINGLE-LINE AWAITMESSAGE
+    A simple way to grab a single reply, from the user that initiated
+    the command. Useful to get "precisions" on certain things...
+    USAGE
+    const response = await client.awaitReply(msg, "Favourite Color?");
+    msg.reply(`Oh, I really love ${response} too!`);
+    */
+    async awaitReply (msg, question, limit = 60000) {
+        const filter = m=>m.author.id = msg.author.id;
+        await msg.channel.send(question);
+        try {
+            const collected = await msg.channel.awaitMessages(filter, { max: 1, time: limit, errors: ["time"] });
+            return collected.first().content;
+        } catch (e) {
+            return false;
+        }
+    }
+}
+
+const client = new Bot();
+console.log(client.config.permLevels.map(p => `${p.level} : ${p.name}`));
+
+const init = async () => {
+
+    // Here we load **commands** into memory, as a collection, so they're accessible
+    // here and everywhere else.
+    klaw("./commands").on("data", (item) =>
+    {
+        const cmdFile = path.parse(item.path);
+        if (!cmdFile.ext || cmdFile.ext !== ".js") return;
+
+        const response = client.loadCommand(cmdFile.dir, `${cmdFile.name}${cmdFile.ext}`);
+
+        if (response)
+        {
+            client.logger.error(response);
         }
     });
-});
 
-const activity_list = [
-    "with the !help command.",
-    "with the developers console",
-    "with some code",
-    "with your lives"
-];
+    // Then we load events, which will include our message and ready event.
+    const evtFiles = await readdir("./events/");
+    client.logger.log(`Loading a total of ${evtFiles.length} events.`, "log");
 
-let usersApplicationStatus = [];
-let userToSubmitApplicationsTo = "416354331592359936";
-//let userToSubmitApplicationsTo = "520182741959180288"; //#web_team
+    evtFiles.forEach(file => {
+        const eventName = file.split(".")[0];
 
-const applicationFormCompleted = (client, data) => {
-    let REmbed = new Discord.RichEmbed()
-        .setAuthor('Requester: ' + data.user.username)
-        .setTitle(`A new event request has been submitted!`)
-        .setColor(5233919)
-        .addField('Platform', data.answers[0])
-        .addField('Requested Date', data.answers[1])
-        .addField('Requested Time', data.answers[2])
-        .addField('Game Requested', data.answers[3])
-        .addField('Activity', data.answers[4]);
+        client.logger.log(`Loading Event: ${eventName}`);
 
-    if(data.answers[4].toLowerCase() === "raid")
-    {
-        REmbed.addField('Raid Event', data.answers[5]);
-        REmbed.addField('Requested Difficulty', data.answers[6]);
-        REmbed.addField('Requested Ability Level', data.answers[7]);
-        REmbed.addField('Comments', data.answers[8]);
-    } else if(data.answers[4].toLowerCase() === "crucible") {
-        REmbed.addField('Crucible Mode', data.answers[5]);
-        REmbed.addField('Comments', data.answers[6]);
-    } else {
-        REmbed.addField('Comments', data.answers[5]);
+        const event = new (require(`./events/${file}`))(client);
+
+        // This line is awesome by the way. Just sayin'.
+        client.on(eventName, (...args) => event.run(...args));
+        delete require.cache[require.resolve(`./events/${file}`)];
+    });
+
+    client.levelCache = {};
+    for (let i = 0; i < client.config.permLevels.length; i++) {
+        const thisLevel = client.config.permLevels[i];
+        client.levelCache[thisLevel.name] = thisLevel.level;
     }
 
-    if(data.answers[0].toLowerCase() === 'xbox')
-    {
-        client.channels.get(userToSubmitApplicationsTo).send(`**BEHOLD** <@&365412296945565706> you have a new event request!`)
-            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed).then(async (embedMessage) => {
-                await embedMessage.react('✅');
-                await embedMessage.react('❎');
-            }));
-    } else if(data.answers[0].toLowerCase() === 'ps4') {
-        client.channels.get(userToSubmitApplicationsTo).send(`**BEHOLD** <@&370195805610573824> you have a new event request!`)
-            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed)
-                .then(async (embedMessage) => {
-                    await embedMessage.react('✅');
-                    await embedMessage.react('❎');
-                }));
-    } else {
-        client.channels.get(userToSubmitApplicationsTo).send(`**BEHOLD** <@&375993110846636033> you have a new event request!`)
-            .then(client.channels.get(userToSubmitApplicationsTo).send(REmbed).then(async (embedMessage) => {
-                await embedMessage.react('✅');
-                await embedMessage.react('❎');
-            }));
-    }
-
-    let sheets = require('./utils/sheets.js');
-
-    sheets(data);
-
-    usersApplicationStatus = usersApplicationStatus.filter(el => el.id !== data.user.id);
+    client.login(client.config.token);
 };
 
-const sendUserApplyForm = message => {
-    const user = usersApplicationStatus.find(user => user.id === message.author.id);
+init();
 
-    if (!user) {
-        message.author.send('You want to request an event? Answer my questions first!');
-        message.author.send(applicationQuestions[0]);
-        usersApplicationStatus.push({id: message.author.id, currentStep: 0, answers: [], user: message.author});
-    } else {
-        message.author.send(applicationQuestions[user.currentStep]);
+client.on("disconnect", () => client.logger.warn("Bot is disconnecting..."))
+    .on("reconnecting", () => client.logger.log("Bot reconnecting...", "log"))
+    .on("error", e => client.logger.error(e))
+    .on("warn", info => client.logger.warn(info));
 
-        if(user.currentStep >= applicationQuestions.length)
-        {
-            message.author.send("Thank you for submitting an event request!");
-            cancelUserApplicationForm(message);
-        } else {
-            message.author.send(applicationQuestions[user.currentStep]);
-        }
-    }
+String.prototype.toProperCase = function () {
+    return this.replace(/([^\W_]+[^\s-]*) */g, function (txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 };
 
-const cancelUserApplicationForm = (message, isRedo = false) => {
-    const user = usersApplicationStatus.find(user => user.id === message.author.id);
-
-    if (user) {
-        usersApplicationStatus = usersApplicationStatus.filter(el => el.id !== user.id)
-        message.reply("Application canceled.");
-    } else if (!isRedo) {
-        message.reply("You have not started an event request yet.");
-    }
+// <Array>.random() returns a single random element from an array
+// [1, 2, 3, 4, 5].random() can return 1, 2, 3, 4 or 5.
+Array.prototype.random = function () {
+    return this[Math.floor(Math.random() * this.length)];
 };
 
-bot.on("ready", async () => {
-    console.log(`${bot.user.username} is now online for ${bot.guilds.size} servers!`);
-  
-    setInterval(() => {
-        const index = Math.floor(Math.random() * (activity_list.length - 1) + 1); // generates a random number between 1 and the length of the activities array list (in this case 5).
-        bot.user.setActivity(activity_list[index]); // sets bot's activities to one of the phrases in the arraylist.
-    }, 60000);
-
-    Notify_chan = bot.channels.find('id', '309597400434212865'); //Get the channel ID for #hellbot_thunderdome
+// These 2 process methods will catch exceptions and give *more details* about the error and stack trace.
+process.on("uncaughtException", (err) => {
+    const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
+    console.error("Uncaught Exception: ", errorMsg);
+    // Always best practice to let the code crash on uncaught exceptions.
+    // Because you should be catching them anyway.
+    process.exit(1);
 });
 
-setInterval(function() {
-   let d = new Date();
-   if(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0)
-   {
-       console.log(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0);
-   } else {
-       console.log(Math.floor((d.getTime() - start_time) / 3600000) % interval_hours > 0);
-   }
-    //Notify_chan.sendMessage('g upcoming');
-}, 60 * 1000 * 60 * 72);
-
-bot.on("message", async message => {
-    if(message.author.bot) return;
-    if(message.channel.type === "dm") {
-        const user = usersApplicationStatus.find(user => user.id === message.author.id);
-
-        if (user && message.content) {
-            switch(user.currentStep)
-            {
-                case 0:
-                    if(message.content.toLowerCase() === 'pc' || message.content.toLowerCase() === 'p.c.' || message.content.toLowerCase() === 'xbox' || message.content.toLowerCase() === 'ps4')
-                    {
-
-                    } else {
-                        console.log(message.content);
-                        message.author.send(`${message.content} is not a valid platform, try again and enter either PC, XBOX or PS4`);
-                        return message.author.send(applicationQuestions[0]);
-                    }
-
-                    break;
-                case 1:
-                    if(isNaN(Date.parse(message.content)))
-                    {
-                        message.author.send(`Please enter a valid date, not ${message.content}`);
-                        return message.author.send(applicationQuestions[1]);
-                    } else if((Date.parse(message.content) - Date.now()) <= 0) {
-                        message.author.send(`Please set a date at least 24 hours in the future!`);
-                        return message.author.send(applicationQuestions[1]);
-                    }
-
-                    break;
-                case 2:
-                    if(message.content.length < 4 || message.content.length > 5)
-                    {
-                        message.author.send(`Please put in a valid time, in UTC. Example: 16:00 is 4pm`);
-                        return message.author.send(applicationQuestions[2]);
-                    }
-
-                    break;
-                case 3:
-                    if(message.content.toLowerCase() === 'd1' || message.content.toLowerCase() === 'd2')
-                    {
-
-                    } else {
-                        message.author.send(`Please enter either D1 or D2 as your answer, not ${message.content}`);
-                        return message.author.send(applicationQuestions[3]);
-                    }
-
-                    break;
-                case 4:
-                    if(message.content.toLowerCase() === 'raid' || message.content.toLowerCase() === 'crucible' ||
-                        message.content.toLowerCase() === 'gambit' || message.content.toLowerCase() === 'nightfall' ||
-                        message.content.toLowerCase() === 'milestones')
-                    {
-
-                    } else {
-                        message.author.send(`Please enter one of the following: Raid, Crucible, Gambit, Nightfall or Milestones`);
-                        return message.author.send(applicationQuestions[4]);
-                    }
-
-                    break;
-                case 5:
-                    if(message.content.toLowerCase() === 'last wish' || message.content.toLowerCase() === 'scourge of the past' ||
-                        message.content.toLowerCase() === 'leviathan' || message.content.toLowerCase() === 'eater of worlds' ||
-                        message.content.toLowerCase() === 'spire of stars' || message.content.toLowerCase() === 'sos' ||
-                        message.content.toLowerCase() === 'eow' || message.content.toLowerCase() === 'sotp')
-                    {
-
-                    } else {
-                        message.author.send(`Please enter one of the following raids: Last Wish, Scourge of the Past, Leviathan, Eater of Worlds, Spire of Stars`);
-                        return message.author.send(applicationQuestions[5]);
-                    }
-                    break;
-                case 6:
-                    if(message.content.toLowerCase() === 'quickplay' || message.content.toLowerCase() === 'iron banner' ||
-                        message.content.toLowerCase() === 'competitive')
-                    {
-
-                    } else {
-                        message.author.send(`Please enter one of the following: Quickplay, Iron Banner or Competitive`);
-                        return message.author.send(applicationQuestions[6]);
-                    }
-                    break;
-                case 7:
-                    if(message.content.toLowerCase() === 'normal' || message.content.toLowerCase() === 'prestige')
-                    {
-
-                    } else {
-                        message.author.send(`Please enter one of the following: Normal or Prestige`);
-                        return message.author.send(applicationQuestions[7]);
-                    }
-                    break;
-                case 8:
-                    if(message.content.toLowerCase() === 'training' || message.content.toLowerCase() === 'intermediate' ||
-                        message.content.toLowerCase() === 'advanced')
-                    {
-
-                    } else {
-                        message.author.send(`Please enter one of the following: Training, Intermediate or Advanced`);
-                        return message.author.send(applicationQuestions[8]);
-                    }
-                    break;
-            }
-
-            user.answers.push(message.content);
-
-            if(typeof user.answers[4] !== 'undefined')
-            {
-                if (user.answers[4].toLowerCase() === 'crucible' && user.answers.length === 5) {
-                    user.currentStep++;
-                } else if((user.answers[4].toLowerCase() === 'nightfall' || user.answers[4].toLowerCase() === 'gambit' || user.answers[4].toLowerCase() === 'milestones') && user.currentStep != 10) {
-                    user.currentStep = 10;
-                    return message.author.send(applicationQuestions[9]);
-                }
-            }
-
-            user.currentStep++;
-
-            //console.log(user.currentStep);
-            //console.log(user.answers);
-
-            if (user.currentStep >= 10) {
-                applicationFormCompleted(bot, user);
-                message.author.send("Congratulations your event request has been sent!");
-            } else {
-                //console.log('content is: ' + message.content + " and step is: " + user.currentStep);
-                if(user.currentStep === 5 && message.content.toLowerCase() !== 'raid')
-                {
-                    user.currentStep++;
-                    if(message.content.toLowerCase() !== 'crucible')
-                    {
-                        user.currentStep++;
-                    }
-                } else if(user.currentStep === 6 && user.answers[4].toLowerCase() === 'raid') {
-                    user.currentStep++;
-                } else if(user.currentStep === 7 && user.answers[4].toLowerCase() === 'crucible') {
-                    user.currentStep = user.currentStep + 2;
-                }
-                message.author.send(applicationQuestions[user.currentStep]);
-            }
-        }
-    }
-
-    if(config.debug === true && (message.channel.id !== '520182741959180288' && message.author.id !== '131526937364529152')) return;
-
-    let prefix = config.prefix;
-    let messageArray = message.content.replace(/  +/g, ' ').split(" ");
-    let command = messageArray[0].toLowerCase();
-
-    if(command.charAt(0) !== prefix) return;
-
-    let args    = messageArray.slice(1); //takes the first item off the list aka the command
-
-    let commandfile = bot.commands.get(command.slice(prefix.length));
-
-    if(commandfile)
-    {
-        if(commandfile.help.triggers === 'testrequest')
-        {
-            sendUserApplyForm(message);
-        } else {
-            commandfile.run(bot, message, args);
-        }
-    }
+process.on("unhandledRejection", err => {
+    console.error("Uncaught Promise Error: ", err);
 });
-
-bot.on("guildMemberAdd", member => {
-    let REmbed = new Discord.RichEmbed()
-        .setThumbnail("https://i.imgur.com/IdGhpsp.png")
-        .setColor(5233919)
-        .setTitle(`To gain membership and full access to the G4G server, please perform the following steps:`)
-        .setDescription(`1: Set your Discord nickname for this server to your Bungie gamer tag or B.net ID\n` +
-            `2: Confirm your age\n` +
-            `3: Confirm the Bungie Clan you have joined, eg G4G Orion\n` +
-            `4: Accept the invitation to join our Guilded page, authorizing with your Discord details\n` +
-            `5: Make sure you have \`Allow Direct Messages from Server Members\` turned on, this can be found in settings->Privacy and Safety`);
-
-    if(member.guild.id === "220467406559117312" && config.debug === false) { //G4G
-        member.guild.channels.get('525270659438215178').send(`Welcome to G4G <@${member.user.id}>`)
-            .then(message =>
-                member.guild.channels.get('525270659438215178').send(REmbed))
-            .then(msg => member.guild.channels.get('538644586394812416').send(`oi ***fuckers*** stop chattin shit and get yo bitch asses into #pending_pool and welcome this mofo named <@${member.user.id}>`));
-    }
-});
-
-bot.on("guildMemberRemove", member => {
-    member.guild.channels.get('538644586394812416').send(`<@${member.user.id}> has left, please remove them from Bungie and Guilded`);
-});
-
-bot.login(config.token);

@@ -1,24 +1,33 @@
-const fs = require("fs");
-const Discord = require('discord.js');
+const Command = require("../base/Command.js");
+const { version } = require("discord.js");
 
-module.exports.run = async(bot, message, args) => {
-    fs.readdir("./commands", (err, files) => {
+class helpMe extends Command {
+    constructor(client) {
+        super(client, {
+            name: "Halp",
+            usage: "helpme",
+            description: `Lets help the user out`,
+            role: "everyone"
+        });
+    }
 
-        let command = [];
-        let sCommand = '\n';
+    async run(message, args, level) { // eslint-disable-line no-unused-vars
+        fs.readdir("./commands", (err, files) => {
 
-        if(err) console.log(err);
+            let command = [];
+            let sCommand = '\n';
 
-        let jsfile = files.filter(f => f.split(".").pop() === "js")
+            if (err) console.log(err);
 
-        if(jsfile.length <= 0)
-        {
-            console.log("Couldn't find any commands");
+            let jsfile = files.filter(f => f.split(".").pop() === "js")
 
-            return;
-        }
+            if (jsfile.length <= 0) {
+                console.log("Couldn't find any commands");
 
-        jsfile.forEach((f, i) => {
+                return;
+            }
+
+            jsfile.forEach((f, i) => {
                 let props = require(`./${f}`);
 
                 if (typeof props.help === "undefined") {
@@ -26,17 +35,15 @@ module.exports.run = async(bot, message, args) => {
 
                 } else {
                     // NEED TO NOW LOOK FOR PROPS.HELP.ROLE AND IF IT IS NONE, PROCEED, IF IT IS A ROLE THEN CHECK AGAINST USER ROLE BEFORE ADDING
-                    if(props.help.role === "none")
-                    {} else if(props.help.role !== 'everyone')
-                    {
-                        if(props.help.role == "Clan Council")
-                        {
+                    if (props.help.role === "none") {
+                    } else if (props.help.role !== 'everyone') {
+                        if (props.help.role == "Clan Council") {
                             let councilRole = message.guild.roles.find(role => role.name === "Clan Council");
                             if (message.member.roles.has(councilRole.id)) {
                                 sCommand = sCommand + `**${props.help.name}** - ${props.help.description}\n`;
                                 command[props.help.name] = props.help.description;
                             }
-                        } else if(props.help.role == "Officer") {
+                        } else if (props.help.role == "Officer") {
                             let officerRole = message.guild.roles.find(role => role.name === "Officer");
 
                             if (message.member.roles.has(officerRole.id)) {
@@ -51,20 +58,16 @@ module.exports.run = async(bot, message, args) => {
                         command[props.help.name] = props.help.description;
                     }
                 }
+            });
+
+            let oEmbed = new Discord.RichEmbed()
+                .setAuthor("TheSpeakerBot")
+                .setTitle("Help File")
+                .setColor(0x00ff00)
+                .setDescription(sCommand);
+            return message.author.send(oEmbed);
         });
-
-        let oEmbed = new Discord.RichEmbed()
-            .setAuthor("TheSpeakerBot")
-            .setTitle("Help File")
-            .setColor(0x00ff00)
-            .setDescription(sCommand);
-        return message.author.send(oEmbed);
-    });
+    }
 }
 
-module.exports.help = {
-    name: "Halp",
-    triggers: "helpme",
-    description: `Lets help the user out`,
-    role: "everyone"
-}
+module.exports = helpMe;
