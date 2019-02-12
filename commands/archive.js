@@ -1,18 +1,28 @@
-const Discord = require("discord.js");
+const Command = require("../base/Command.js");
 const https = require('https');
 
-module.exports.run = async(bot, message, args) => {
-    if(message.member.roles.find("name", "Officer"))
-    {
+class Archive extends Command {
+    constructor(client) {
+        super(client, {
+            name: "archive",
+            description: "Officer Archiving command",
+            category: "Clan",
+            usage: "archive <Guilded ID> <DTR ID> <Finished/DNF/Cancelled> <Notes>",
+            guildOnly: true,
+            aliases: [],
+            permLevel: "Officer"
+        });
+    }
+
+    async run(message, args, level) {
         //Lets check to see if we have enough arguments
-        if(args.length < 3)
-        {
+        if (args.length < 3) {
             //Missing parameters
             return message.channel.send(`Something wasn't quite right with your submission, you need a minimum of 3 arguments, you supplied ${args.length}.` +
-                ` The correct format is \`!${this.help.triggers} <Guilded ID> <DTR ID> <Status>\``);
+                ` The correct format is \`!${this.conf.usage}\``);
         }
 
-        if(args.length < 4) {
+        if (args.length < 4) {
             https.get(`https://api.itslit.uk/G4G/archive/${args[0]}/${args[1]}/${args[2]}/${message.author.username}/true`, (resp) => {
                 let data = '';
 
@@ -57,14 +67,7 @@ module.exports.run = async(bot, message, args) => {
                 });
             });
         }
-    } else {
-        return message.channel.send("You do not have the correct role to archive");
     }
 }
 
-module.exports.help = {
-    name: "archive",
-    triggers: "archive",
-    description: "An event archive command for G4G",
-    role: "officer"
-}
+module.exports = Archive;
