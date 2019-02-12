@@ -19,7 +19,6 @@ setInterval(() => {
     http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
 }, 280000);
 
-
 class Bot extends Client {
     constructor (options) {
         super(options);
@@ -72,7 +71,7 @@ class Bot extends Client {
             props.conf.aliases.forEach(alias => {
                 this.aliases.set(alias, props.help.name);
             });
-
+          
             return false;
 
           } catch (e) {
