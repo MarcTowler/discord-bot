@@ -1,18 +1,19 @@
 const Command = require("../base/Command.js");
-const { version } = require("discord.js");
-const https = require('https');
 
-class suggest extends Command {
+class Suggest extends Command {
     constructor(client) {
         super(client, {
-            name: "Suggestions",
-            usagge: "suggest",
-            description: "Make a suggestion with !suggest <SUGGESTION HERE>",
-            role: "everyone"
+            name: "suggest",
+            description: "Add a suggestion to be voted on",
+            category: "Clan",
+            usage: "suggest <Suggestion>",
+            guildOnly: true,
+            aliases: ["suggstion"],
+            permLevel: "User"
         });
     }
 
-    async run(message, args, level) { // eslint-disable-line no-unused-vars
+    async run(message, args, level) {
         if (args.length < 4) {
             return message.channel.send(`Sorry ${message.member.displayName} but a suggestion needs to form a sentence!`);
         }
@@ -31,4 +32,4 @@ class suggest extends Command {
     }
 }
 
-module.exports = suggest;
+module.exports = Suggest;

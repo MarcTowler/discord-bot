@@ -1,18 +1,20 @@
 const Command = require("../base/Command.js");
-const { version } = require("discord.js");
-const https = require('http');
+const https = require('https');
 
-class flip extends Command {
+class Flip extends Command {
     constructor(client) {
         super(client, {
-            name: "Coin Toss",
-            usage: "flip",
-            description: "A Coin Toss mini game, usage is !flip <heads/tails>",
-            role: "everyone"
+            name: "Flip",
+            description: "A simple Coin Toss game",
+            category: "Games",
+            usage: "flip <Heads/Tails>",
+            guildOnly: true,
+            aliases: [],
+            permLevel: "User"
         });
     }
 
-    async run(message, args, level) { // eslint-disable-line no-unused-vars
+    async run(message, args, level) {
         https.get(`https://api.itslit.uk/games/cointoss/${message.member.displayName}/${args[0]}`, (resp) => {
 
             let data = '';
@@ -34,4 +36,4 @@ class flip extends Command {
     }
 }
 
-module.exports = flip;
+module.exports = Flip;

@@ -1,20 +1,22 @@
 const Command = require("../base/Command.js");
-const { version } = require("discord.js");
-const https = require('http');
-const applicationQuestions = require("../application-questions.js");
+const applicationQuestions = require("../base/application-questions.js");
 
-class eventRequest extends Command {
+class eventrequest extends Command {
     constructor(client) {
         super(client, {
-            name: "Request an Event",
+            name: "eventrequest",
+            description: "Request an event to be run for you by the Officers",
+            category: "Clan",
             usage: "eventrequest",
-            description: `Request an event to be run for you by the Officers`,
-            role: "everyone"
+            guildOnly: false,
+            aliases: [],
+            permLevel: "User"
         });
     }
 
     async run(message, args, level) { // eslint-disable-line no-unused-vars
+
     }
 }
 
-module.exports = eventRequest;
+module.exports = eventrequest;

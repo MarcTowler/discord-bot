@@ -1,18 +1,21 @@
 const Command = require("../base/Command.js");
-const { version } = require("discord.js");
 const https = require('https');
+const Discord = require('discord.js');
 
-class points extends Command {
+class Points extends Command {
     constructor(client) {
         super(client, {
-            name: "Points",
-            usage: "points",
-            description: "See where you stand in G4G's PvE or PvP clan leaderboards!",
-            role: "everyone"
+            name: "points",
+            description: "View your points totals on either the PvP or PvE ladder as well as other people's AND top10!",
+            category: "Clan",
+            usage: "points <PvE/PvP> <optional: username/top10>",
+            guildOnly: true,
+            aliases: [],
+            permLevel: "User"
         });
     }
 
-    async run(message, args, level) { // eslint-disable-line no-unused-vars
+    async run(message, args, level) {
         if (args.length <= 0) {
             return message
                 .channel
@@ -130,13 +133,32 @@ class points extends Command {
                                     let points = dataArr[2].split(' ')[0];
                                     let badge = `https://clanevents.net/images/G4G/rank${Math.floor(points / 1500)}.png`;
                                     let prestige = dataArr[0].split(': ')[1];
+                                    let difference = '';
+
+                                    //How Far Integration
+                                    if (points < 1500) {
+                                        difference = 1500 - points;
+                                        //rank = "Harbinger";
+                                    } else if (points >= 1500 && points < 3000) {
+                                        difference = 3000 - points;
+                                    } else if (points >= 3000 && points < 4500) {
+                                        difference = 4500 - points;
+                                    } else if (points >= 4500 && points < 6000) {
+                                        difference = 6000 - points;
+                                    } else if (points >= 6000 && points < 7500) {
+                                        difference = 7500 - points;
+                                    } else {
+                                        difference = 0;
+                                    }
+                                    //End Integration
 
                                     REmbed = new Discord.RichEmbed()
                                         .setThumbnail(badge)
                                         .setColor(0x00ff00)
                                         .setTitle(`${args[1]}'s ${args[0]} stats`)
                                         .addField(`${args[0]} Rank`, rank)
-                                        .addField(`${args[0]} points`, points)
+                                        .addField(`${args[0]} points`, points, true)
+                                        .addField('Points Left to Rank Up', difference, true)
                                         .addField(`Number of ${args[0]} Prestiges`, prestige);
                                 }
                                 message.channel.send(REmbed);
@@ -146,7 +168,7 @@ class points extends Command {
                             message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
                             message.guild.fetchMember('131526937364529152').then(user => {
                                 user.send(`A new error has occured in ${message.channel.name} caused by ${message.author.username}` +
-                                    ` using !${this.help.triggers} ${args}. ${err.message}`)
+                                    ` using !${this.help.name} ${args}. ${err.message}`)
                             });
                         });
                     }
@@ -157,7 +179,7 @@ class points extends Command {
                     //Quick check to make sure that PvE or PvP is set
                     https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${message.author.username}/plain/true`, (resp) => {
                         let data = '';
-                        args[0] = (args[0] === "pve") ? "PvE" : "PvP";
+                        args[0] = (args[0].toLowerCase() === "pve") ? "PvE" : ((args[0].toLowerCase() === "pvp") ? "PvP" : "Gambit");
 
                         resp.on('data', (chunk) => {
                             data += chunk;
@@ -177,13 +199,32 @@ class points extends Command {
                                 let points = dataArr[2].split(' ')[0];
                                 let badge = `https://clanevents.net/images/G4G/rank${Math.floor(points / 1500)}.png`;
                                 let prestige = dataArr[0].split(': ')[1];
+                                let difference = '';
+
+                                //How Far Integration
+                                if (points < 1500) {
+                                    difference = 1500 - points;
+                                    //rank = "Harbinger";
+                                } else if (points >= 1500 && points < 3000) {
+                                    difference = 3000 - points;
+                                } else if (points >= 3000 && points < 4500) {
+                                    difference = 4500 - points;
+                                } else if (points >= 4500 && points < 6000) {
+                                    difference = 6000 - points;
+                                } else if (points >= 6000 && points < 7500) {
+                                    difference = 7500 - points;
+                                } else {
+                                    difference = 0;
+                                }
+                                //End Integration
 
                                 REmbed = new Discord.RichEmbed()
                                     .setThumbnail(badge)
                                     .setColor(0x00ff00)
                                     .setTitle(`${message.member.displayName}'s ${args[0]} stats`)
                                     .addField(`${args[0]} Rank`, rank)
-                                    .addField(`${args[0]} points`, points)
+                                    .addField(`${args[0]} points`, points, true)
+                                    .addField('Points Left to Rank Up', difference, true)
                                     .addField(`Number of ${args[0]} Prestiges`, prestige);
                             }
                             message.channel.send(REmbed);
@@ -192,7 +233,7 @@ class points extends Command {
                         message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
                         message.guild.fetchMember('131526937364529152').then(user => {
                             user.send(`A new error has occured in ${message.channel.name} caused by ${message.author.username}` +
-                                ` using !${this.help.triggers} ${args}.\n The Error was ${err.message}`)
+                                ` using !${this.conf.name} ${args}.\n The Error was ${err.message}`)
                         });
                     });
 
@@ -200,14 +241,14 @@ class points extends Command {
                 default: //Something went wrong
                     return message
                         .channel
-                        .send(`Something didn't quite go right, !${this.help.triggers} requires PvE or PvP as a minimum argument. Try again with !${this.help.triggers} PvE or !${this.help.triggers} PvP`);
+                        .send(`Something didn't quite go right, !${this.conf.name} requires PvE or PvP as a minimum argument. Try again with !${this.conf.name} PvE or !${this.conf.name} PvP`);
             }
         } else {
             return message
                 .channel
-                .send(`Something didn't quite go right, !${this.help.triggers} requires PvE or PvP as a minimum argument. Try again with !${this.help.triggers} PvE or !${this.help.triggers} PvP`);
+                .send(`Something didn't quite go right, !${this.conf.name} requires PvE or PvP as a minimum argument. Try again with !${this.conf.name} PvE or !${this.conf.name} PvP`);
         }
     }
 }
 
-module.exports = points;
+module.exports = Points;

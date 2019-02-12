@@ -1,18 +1,20 @@
 const Command = require("../base/Command.js");
-const { version } = require("discord.js");
 const https = require('https');
 
-class roulette extends Command {
+class Roulette extends Command {
     constructor(client) {
         super(client, {
-            name: "Roulette",
+            name: "roulette",
+            description: "A Russian Roulette game",
+            category: "Games",
             usage: "roulette",
-            description: "A Russian Roulette mini game",
-            role: "everyone"
+            guildOnly: true,
+            aliases: [],
+            permLevel: "User"
         });
     }
 
-    async run(message, args, level) { // eslint-disable-line no-unused-vars
+    async run(message, args, level) {
         https.get(`https://api.itslit.uk/games/roulette/${message.member.displayName}`, (resp) => {
             let data = '';
 
@@ -27,10 +29,10 @@ class roulette extends Command {
             message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
             message.guild.fetchMember('131526937364529152').then(user => {
                 user.send(`A new error has occured in ${message.channel.name} caused by ${message.author.username}` +
-                    ` using !${this.help.triggers} ${args}.\n The Error was ${err.message}`)
+                    ` using !${this.help.name} ${args}.\n The Error was ${err.message}`)
             });
         });
     }
 }
 
-module.exports = roulette;
+module.exports = Roulette;

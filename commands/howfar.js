@@ -1,18 +1,20 @@
 const Command = require("../base/Command.js");
-const { version } = require("discord.js");
 const https = require('https');
 
-class howFar extends Command {
+class Howfar extends Command {
     constructor(client) {
         super(client, {
-            name: "How Far",
-            usage: "howfar",
-            description: "See how far you are from ranking up, the syntax is !howfar <PvE/PvP>",
-            role: "everyone"
+            name: "howfar",
+            description: "Shows you how far you are from levelling up on the points ladder specified.",
+            category: "Clan",
+            usage: "howfar <PvP/PvE>",
+            guildOnly: true,
+            aliases: [],
+            permLevel: "Web Team"
         });
     }
 
-    async run(message, args, level) { // eslint-disable-line no-unused-vars
+    async run(message, args, level) {
         //pull in the points from the db
         let points;
         let difference = 0;
@@ -21,7 +23,7 @@ class howFar extends Command {
         if (args.length === 0) {
             return message
                 .channel
-                .send(`Something didn't quite go right, !${this.help.triggers} requires PvE or PvP as a minimum argument. Try again with !${this.help.triggers} PvE or !${this.help.triggers} PvP`);
+                .send(`Something didn't quite go right, try !${this.help.usage}`);
         }
 
         https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${message.author.username}/json/false`, (resp) => {
@@ -35,9 +37,6 @@ class howFar extends Command {
             resp.on('end', () => {
                 //points = parseInt(data.split(",")[2].replace(`${args[0]} Points`, '')) || 0;
                 points = (typeof data.split(",")[2] === 'undefined') ? 0 : parseInt(data.split(",")[2].replace(`${args[0]} Points`, ''));
-
-                console.log(points);
-//            points = parseInt(points);
 
                 //TODO replace with https://pastebin.com/Xg14CKF8
                 /*
@@ -88,7 +87,7 @@ class howFar extends Command {
             message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
             message.guild.fetchMember('131526937364529152').then(user => {
                 user.send(`A new error has occured in ${message.channel.name} caused by ${message.author.username}` +
-                    ` using !${this.help.triggers} ${args}.\n The Error was ${err.message}`)
+                    ` using !${this.conf.name} ${args}.\n The Error was ${err.message}`)
             });
         });
         //compare against rank up lists
@@ -97,4 +96,4 @@ class howFar extends Command {
     }
 }
 
-module.exports = howFar;
+module.exports = Howfar;

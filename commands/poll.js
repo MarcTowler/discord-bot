@@ -1,3 +1,5 @@
+const Command = require("../base/Command.js");
+const pollLog = {};
 /**
  * TODO
  * - Add restriction flag for 1 react per user
@@ -31,33 +33,32 @@ const options = [
     '🇿',
 ];
 
-const pollLog = {};
-
-function canSendPoll(user_id) {
-    if(pollLog[user_id]) {
-        const timeSince = Date.now() - pollLog[user_id].lastPoll;
-
-        if(timeSince < 60000)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-const Command = require("../base/Command.js");
-const { version } = require("discord.js");
-
-class poll extends Command {
+class Poll extends Command {
     constructor(client) {
         super(client, {
             name: "poll",
-            usage: "poll",
-            description: "Create a poll! Votes handled via emoji reaction",
-            role: "everyone"
+            description: "Create a poll",
+            category: "System",
+            usage: "howfar <PvP/PvE>",
+            guildOnly: true,
+            aliases: [],
+            permLevel: "Web Team"
         });
     }
 
-    async run(message, args, level) { // eslint-disable-line no-unused-vars
+    canSendPoll(user_id) {
+        if(pollLog[user_id]) {
+            const timeSince = Date.now() - pollLog[user_id].lastPoll;
+
+            if(timeSince < 60000)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    async run(message, args, level) {
         //!poll QUESTION OPT1 OPT2 OPT3 etc up to 20
         //!poll "question" "option" "option"
         let choices = message.content.match(/"(.+?)"/g);
@@ -65,7 +66,7 @@ class poll extends Command {
         //Did we get anything?
         if (choices) {
             //spam protection maybe?
-            if (!canSendPoll(message.author.id)) {
+            if (!this.canSendPoll(message.author.id)) {
                 return message.channel.send(`${message.author} please wait before building another poll`);
             }
             //are we having a yes/no poll?
@@ -111,4 +112,4 @@ ${questionOptions
     }
 }
 
-module.exports = poll;
+module.exports = Poll;
