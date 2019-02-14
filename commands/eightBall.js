@@ -9,7 +9,7 @@ class EightBall extends Command {
             category: "Games",
             usage: "8ball <question>",
             guildOnly: true,
-            aliases: ["lexa8ball", "8ball"],
+            aliases: ["lexa8ball", "8ball", "eightBall"],
             permLevel: "User"
         });
     }
