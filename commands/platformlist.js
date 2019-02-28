@@ -1,6 +1,20 @@
+const Command = require("../base/Command.js");
 const Discord = require("discord.js");
 
-module.exports.run = async(bot, message, args) => {
+class Platform extends Command {
+    constructor(client) {
+        super(client, {
+            name: "platform list",
+            description: "view a count of members by platform",
+            category: "Clan",
+            usage: "platform",
+            guildOnly: true,
+            aliases: [],
+            permLevel: "User"
+        });
+    }
+    
+async run(message, args, level) {
 
 	let playstation = "370195805610573824";
 	let playstationmembers = message.guild.roles.get(playstation).members;
@@ -27,11 +41,4 @@ module.exports.run = async(bot, message, args) => {
 	
 }
 
-//@mention needs to be enabled for this to work.
-
-module.exports.help = {
-    name: "Platform List",
-    triggers: "platformlist",
-    description: `Request a list of members with @Role`,
-    role: "everyone"
-}
+module.exports = Platform;
