@@ -13,7 +13,7 @@ class Platform extends Command {
             permLevel: "User"
         });
     }
-    
+
 async run(message, args, level) {
 
 	let playstation = "370195805610573824";
@@ -38,7 +38,7 @@ async run(message, args, level) {
 					`We have ${pcmembers.size} with the @PC role.\n`
 	}
 });
-	
+
 }
 
 module.exports = Platform;
