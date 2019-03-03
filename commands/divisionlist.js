@@ -73,5 +73,6 @@ function send2Embeds(message) {
     });
 }
 }
+}
 
 module.exports = DivisionList;
