@@ -47,20 +47,20 @@ function send2Embeds(message) {
 		.setThumbnail('https://cdn4.iconfinder.com/data/icons/miu-black-social-2/60/playstation-512.png')
 		.addField('Pegasus', `${ps4d1.size} members`, true)
 		.addField('Cygnus', `${ps4d2.size} members`, true)
-		.addField('Orion', `${ps4d3.size} members`, true)
+		.addField('Orion', `${ps4d3.size} members`, true);
 
     let embed2 = new Discord.RichEmbed()
 		.setAuthor('XBox Divisions')
 		.setThumbnail('https://cdn4.iconfinder.com/data/icons/materia-social-free/24/038_025_xbox_game_network_android_material-512.png')
 		.addField('Artemis', `${xboxd1.size} members`, true)
-		.addField('Hydra', `${xboxd2.size} members`, true)
+		.addField('Hydra', `${xboxd2.size} members`, true);
 
     let embed3 = new Discord.RichEmbed()
 		.setAuthor('PC Divisions')
 		.setThumbnail('https://cdn3.iconfinder.com/data/icons/picons-social/57/72-windows8-512.png')
 		.addField('Draco', `${pcd1.size} members`, true)
 		.addField('Phoenix', `${pcd2.size} members`, true)
-		.addField('Scorpius', `${pcd3.size} members`, true)
+		.addField('Scorpius', `${pcd3.size} members`, true);
 
     // send embed to channel
     channel.send(embed1)
