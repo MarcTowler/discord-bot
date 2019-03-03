@@ -32,11 +32,11 @@ async run(message, args, level) {
 	let ps4d3 = message.guild.roles.get(orion).members;
 
 	let xboxd1 = message.guild.roles.get(artemis).members;
-	let xboxd2 = message.guild.roles.get(scorpius).members;
-	let xboxd3 = message.guild.roles.get(hydra).members;
+	let xboxd2 = message.guild.roles.get(hydra).members;
 
 	let pcd1 = message.guild.roles.get(draco).members;
 	let pcd2 = message.guild.roles.get(pheonix).members;
+	let pcd3 = message.guild.roles.get(scorpius).members;
 
 function send2Embeds(message) {
     let channel = message.channel;
