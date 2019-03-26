@@ -31,6 +31,7 @@ module.exports = class {
           .then(message =>
               member.guild.channels.get('525270659438215178').send(REmbed))
           .then(msg => member.guild.channels.get('538644586394812416').send(`oi ***fuckers*** stop chattin shit and get yo bitch asses into #pending_pool and welcome this mofo named <@${member.user.id}>`));
+      member.guild.channels.get('544812700459335680').send(`${member.user.username} has joined`);  //bot log channel
     }
   };
 }

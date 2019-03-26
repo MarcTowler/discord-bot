@@ -27,6 +27,7 @@ class Archive extends Command {
       
         if (args.length < 4) {
             https.get(`https://api.itslit.uk/G4G/archive/${args[0]}/${args[1]}/${args[2]}/${clean}/true`, (resp) => {
+
                 let data = '';
 
                 //a chunk of data has been received
