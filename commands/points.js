@@ -149,8 +149,11 @@ class Points extends Command {
                     break;
                 //Calling their own stats
                 case 1:
+                    let dirty = message.member.displayName;
+                    let clean = dirty.replace(/[^a-zA-Z0-9]/g, "");
                     //Quick check to make sure that PvE or PvP is set
-                    https.get(`https://api.itslit.uk/G4G/points/${args[0].toLowerCase()}/${message.member.displayName}/`, (resp) => {
+                    https.get(`https://api.itslit.uk/G4G/points/${args[0].toLowerCase()}/${clean}/`, (resp) => {
+                      
                         let data = '';
                         args[0] = (args[0].toLowerCase() === "pve") ? "PvE" : ((args[0].toLowerCase() === "pvp") ? "PvP" : "Gambit");
 
