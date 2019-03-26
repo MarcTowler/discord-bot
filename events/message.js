@@ -54,9 +54,9 @@ module.exports = class {
             }));
       }
 
-      //let sheets = require('../utils/sheets.js');
+      let sheets = require('../utils/sheets.js');
 
-     // sheets(data);
+      sheets(data);
 
       usersApplicationStatus = usersApplicationStatus.filter(el => el.id !== data.user.id);
     };

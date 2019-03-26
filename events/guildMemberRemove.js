@@ -6,6 +6,5 @@ module.exports = class {
 
     async run(member) {
         member.guild.channels.get('538644586394812416').send(`${member.user.username} has left, please remove them from Bungie and Guilded`);
-        member.guild.channels.get('544812700459335680').send(`${member.user.username} has left`);  //bot log channel
     }
 }
