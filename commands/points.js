@@ -32,7 +32,7 @@ class Points extends Command {
                         //console.log(message.author.tag);
                         //https.get(`https://api.itslit.uk/G4G/getList/${args[1]}/${args[0]}/`, (resp) => {
                         //https.get(`https://api.itslit.uk/G4G/getList/all/${args[1]}/${args[0]}`, (resp) => {
-                        https.get(`https://api.itslit.uk/G4G/getList/all/${args[0]}/${args[1]}`, (resp) => {
+                        /*https.get(`https://api.itslit.uk/G4G/getList/all/${args[0]}/${args[1]}`, (resp) => {
 
                             args[0] = (args[0].toLowerCase() === 'pve') ? 'PvE' : 'PvP';
 
@@ -103,14 +103,15 @@ class Points extends Command {
                                 });
                             });
 
-                        });
+                        });*/
+                        message.reply("Sorry but Top10 is currently unavailable, <@131526937364529152> is the one to speak to for information");
                     } else {
                         //It should be calling another user's stats
 
                         //lets check to see if @ has been used to tag someone
                         args[1] = (args[1].substr(0, 2) === '<@') ? message.mentions.members.first().user.username : args[1];
 
-                        https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${args[1].toLowerCase()}/plain/true`, (resp) => {
+                        https.get(`https://api.itslit.uk/G4G/points/${args[0].toLowerCase()}/${args[1].toLowerCase()}/`, (resp) => {
                             let data = '';
 
                             resp.on('data', (chunk) => {
@@ -122,45 +123,17 @@ class Points extends Command {
 
                                 args[0] = (args[0] === "pve") ? "PvE" : "PvP";
 
-                                if (data.startsWith("Sorry but", data)) {
-                                    REmbed = new Discord.RichEmbed()
-                                        .setColor(0x00ff00)
-                                        .setTitle(`${args[1]}'s ${args[0]} stats`)
-                                        .setDescription(data);
-                                } else {
-                                    let dataArr = data.split(', ');
-                                    let rank = dataArr[1].split(': ')[1];
-                                    let points = dataArr[2].split(' ')[0];
-                                    let badge = `https://clanevents.net/images/G4G/rank${Math.floor(points / 1500)}.png`;
-                                    let prestige = dataArr[0].split(': ')[1];
-                                    let difference = '';
+                                let jsonData = JSON.parse(data)['response'];
 
-                                    //How Far Integration
-                                    if (points < 1500) {
-                                        difference = 1500 - points;
-                                        //rank = "Harbinger";
-                                    } else if (points >= 1500 && points < 3000) {
-                                        difference = 3000 - points;
-                                    } else if (points >= 3000 && points < 4500) {
-                                        difference = 4500 - points;
-                                    } else if (points >= 4500 && points < 6000) {
-                                        difference = 6000 - points;
-                                    } else if (points >= 6000 && points < 7500) {
-                                        difference = 7500 - points;
-                                    } else {
-                                        difference = 0;
-                                    }
-                                    //End Integration
+                                REmbed = new Discord.RichEmbed()
+                                    .setThumbnail(jsonData['rankBadge'])
+                                    .setColor(0x00ff00)
+                                    .setTitle(`${args[1]}'s ${args[0]} stats`)
+                                    .addField(`${args[0]} Rank`, jsonData['rankName'])
+                                    .addField(`${args[0]} points`, jsonData['totalPoints'], true)
+                                    .addField('Points Left to Rank Up', jsonData['pointsToNext'], true)
+                                    .addField(`Number of ${args[0]} Prestiges`, jsonData['playerResets']);
 
-                                    REmbed = new Discord.RichEmbed()
-                                        .setThumbnail(badge)
-                                        .setColor(0x00ff00)
-                                        .setTitle(`${args[1]}'s ${args[0]} stats`)
-                                        .addField(`${args[0]} Rank`, rank)
-                                        .addField(`${args[0]} points`, points, true)
-                                        .addField('Points Left to Rank Up', difference, true)
-                                        .addField(`Number of ${args[0]} Prestiges`, prestige);
-                                }
                                 message.channel.send(REmbed);
 
                             });
@@ -177,7 +150,7 @@ class Points extends Command {
                 //Calling their own stats
                 case 1:
                     //Quick check to make sure that PvE or PvP is set
-                    https.get(`https://api.itslit.uk/G4G/getList/1/${args[0].toLowerCase()}/null/${message.author.username}/plain/true`, (resp) => {
+                    https.get(`https://api.itslit.uk/G4G/points/${args[0].toLowerCase()}/${message.member.displayName}/`, (resp) => {
                         let data = '';
                         args[0] = (args[0].toLowerCase() === "pve") ? "PvE" : ((args[0].toLowerCase() === "pvp") ? "PvP" : "Gambit");
 
@@ -188,45 +161,18 @@ class Points extends Command {
                         resp.on('end', () => {
                             var REmbed;
 
-                            if (data.startsWith("Sorry but", data)) {
-                                REmbed = new Discord.RichEmbed()
-                                    .setColor(0x00ff00)
-                                    .setTitle(`${message.member.displayName}'s ${args[0]} stats`)
-                                    .setDescription(data);
-                            } else {
-                                let dataArr = data.split(', ');
-                                let rank = dataArr[1].split(': ')[1];
-                                let points = dataArr[2].split(' ')[0];
-                                let badge = `https://clanevents.net/images/G4G/rank${Math.floor(points / 1500)}.png`;
-                                let prestige = dataArr[0].split(': ')[1];
-                                let difference = '';
+                            let jsonData = JSON.parse(data)['response'];
 
-                                //How Far Integration
-                                if (points < 1500) {
-                                    difference = 1500 - points;
-                                    //rank = "Harbinger";
-                                } else if (points >= 1500 && points < 3000) {
-                                    difference = 3000 - points;
-                                } else if (points >= 3000 && points < 4500) {
-                                    difference = 4500 - points;
-                                } else if (points >= 4500 && points < 6000) {
-                                    difference = 6000 - points;
-                                } else if (points >= 6000 && points < 7500) {
-                                    difference = 7500 - points;
-                                } else {
-                                    difference = 0;
-                                }
-                                //End Integration
 
-                                REmbed = new Discord.RichEmbed()
-                                    .setThumbnail(badge)
-                                    .setColor(0x00ff00)
-                                    .setTitle(`${message.member.displayName}'s ${args[0]} stats`)
-                                    .addField(`${args[0]} Rank`, rank)
-                                    .addField(`${args[0]} points`, points, true)
-                                    .addField('Points Left to Rank Up', difference, true)
-                                    .addField(`Number of ${args[0]} Prestiges`, prestige);
-                            }
+                            REmbed = new Discord.RichEmbed()
+                                .setThumbnail(jsonData['rankBadge'])
+                                .setColor(0x00ff00)
+                                .setTitle(`${message.member.displayName}'s ${args[0]} stats`)
+                                .addField(`${args[0]} Rank`, jsonData['rankName'])
+                                .addField(`${args[0]} points`, jsonData['totalPoints'], true)
+                                .addField('Points Left to Rank Up', jsonData['pointsToNext'], true)
+                                .addField(`Number of ${args[0]} Prestiges`, jsonData['playerResets']);
+
                             message.channel.send(REmbed);
                         });
                     }).on("error", (err) => {

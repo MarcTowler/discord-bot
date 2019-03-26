@@ -22,8 +22,11 @@ class Archive extends Command {
                 ` The correct format is \`!${this.conf.usage}\``);
         }
 
+        let dirtyString = message.member.displayName;
+        let clean = dirtyString.replace(/[^a-zA-Z0-9_-]/g, "");
+      
         if (args.length < 4) {
-            https.get(`https://api.itslit.uk/G4G/archive/${args[0]}/${args[1]}/${args[2]}/${message.author.username}/true`, (resp) => {
+            https.get(`https://api.itslit.uk/G4G/archive/${args[0]}/${args[1]}/${args[2]}/${clean}/true`, (resp) => {
                 let data = '';
 
                 //a chunk of data has been received
@@ -46,7 +49,7 @@ class Archive extends Command {
         } else {
             let shifted = args.slice(3).join(" ");
 
-            https.get(`https://api.itslit.uk/G4G/archive/${args[0]}/${args[1]}/${args[2]}/${message.author.username}/true/${shifted}`, (resp) => {
+            https.get(`https://api.itslit.uk/G4G/archive/${args[0]}/${args[1]}/${args[2]}/${clean}/true/${encodeURIComponent(shifted)}`, (resp) => {
                 let data = '';
 
                 //a chunk of data has been received
