@@ -18,21 +18,44 @@ class voice extends Command {
     async run(message, args, level) {
         if(args.length > 0)
         {
-            if(args[0].toLowerCase() === 'create')
+            let VOIProle = message.guild.roles.find('name', 'FireTeamVOIP');
+
+            switch(args[0].toLowerCase())
             {
-                message.guild.createChannel(`${message.member.displayName}'s fireteam`, 'voice')
-                    .then(channel => {
-                        message.member.addRole(message.member.guild.roles.find('name', 'FireTeamVOIP'));
-                        deleteEmptyChannelAfterDelay(channel, message);
-                        channel.setParent('370180211037175818')
-                            .catch(error => console.log(error));
+                case 'create':
+                    message.guild.createChannel(`${message.member.displayName}'s fireteam`, 'voice')
+                        .then(channel => {
+                            message.member.addRole(message.member.guild.roles.find('name', 'FireTeamVOIP'));
+                            deleteEmptyChannelAfterDelay(channel, message);
+                            channel.setParent('370180211037175818')
+                                .catch(error => console.log(error));
+                        })
+                        .catch(console.error);
+                    
+                    break;
+                case 'invite':
+                    //check the caller has a voip channel first
+                    if(!message.guild.channels.exists('name', `${message.member.displayName}'s fireteam`))
+                    {
+                        //Oops
+                        return message.reply("You need to create a voice channel first! Use `!voice create`");
+                    }
+                    
+                    //check they actually specified a username
+                    if(args.length == 1)
+                    {
+                        return message.reply("How am I meant to know who you are wanting to invite");
+                    }
+
+                    //loop through the list
+                    //message.mentions.users
+                    message.mentions.users.forEach(function(user) {
+                        message.guild.member(user).addRole(VOIProle.id)
+                        .then(message.guild.member(user).send(`You were invited to join the voice channel ${message.member.displayName}'s fireteam`));
                     })
-                    .catch(console.error);
             }
         }
     }
-
-    
 }
 
 module.exports = voice;
