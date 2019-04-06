@@ -1,23 +1,18 @@
 if (Number(process.version.slice(1).split(".")[0]) < 8) throw new Error("Node 8.0.0 or higher is required. Update Node on your system.");
 
-const { Client, Collection } = require("discord.js");
+const { Client, Collection, Discord } = require("discord.js");
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
 const Enmap = require("enmap");
 const klaw = require("klaw");
 const path = require("path");
 const http = require('http');
+const https = require('https');
 const express = require('express');
 const app = express();
-
-app.get('/', (request, response) => {
-    console.log(Date.now() + " Ping Received");
-    response.sendStatus(200);
-});
-app.listen(process.env.PORT);
-setInterval(() => {
-    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-}, 280000);
+let xboxArray = [];
+let ps4Array = [];
+let pcArray = [];
 
 class Bot extends Client {
     constructor (options) {
@@ -34,6 +29,7 @@ class Bot extends Client {
         this.aliases = new Collection();
 
         this.settings = new Enmap({ name: "settings", cloneLevel: "deep", fetchAll: false, autoFetch: true });
+
         this.logger = require("./modules/Logger");
         this.wait = require("util").promisify(setTimeout);
     }
@@ -60,7 +56,7 @@ class Bot extends Client {
             if(client.aliases.has(commandName)) commandName = client.aliases.get(commandName);
 
             const props = new (require(`${commandPath}${path.sep}${commandName}`))(this);
-            this.logger.log(`Loading Command: ${props.help.name}. 👌`, "log");
+            this.logger.log(`Loading Command: ${props.help.name}. ??`, "log");
             props.conf.location = commandPath;
             if (props.init) {
                 props.init(this);
@@ -142,6 +138,125 @@ class Bot extends Client {
 
 const client = new Bot();
 
+app.get('/', (request, response) => {
+    response.sendStatus(200);
+});
+
+app.get('/ps4-events', async (request, response) => {
+    https.get(`https://api.itslit.uk/G4G/upcoming`, (resp) => {
+
+        let data = '';
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+        resp.on('end', async () => {
+            let jsonData = JSON.parse(data);
+            jsonData['response']['events'].forEach(function(element) {
+              if(!Array.isArray(element['allowedRoleIds'])) return;
+                if(element['allowedRoleIds'][0] == 411){
+                        ps4Array.push(element);
+                }
+            })
+          ps4(ps4Array, client, jsonData['response']['endDate']);
+        });
+    })
+    response.sendStatus(200);
+});
+
+app.get('/xbox-events', async (request, response) => {
+    https.get(`https://api.itslit.uk/G4G/upcoming`, (resp) => {
+
+        let data = '';
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+        resp.on('end', async () => {
+            let jsonData = JSON.parse(data);
+            jsonData['response']['events'].forEach(function(element) {
+              if(!Array.isArray(element['allowedRoleIds'])) return;
+                if(element['allowedRoleIds'][0] == 412){
+                        xboxArray.push(element);
+                }
+            })
+          xbox(xboxArray, client, jsonData['response']['endDate']);
+        });
+    })
+    response.sendStatus(200);
+});
+app.get('/pc-events', async (request, response) => {
+    https.get(`https://api.itslit.uk/G4G/upcoming`, (resp) => {
+
+        let data = '';
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+        resp.on('end', async () => {
+            let jsonData = JSON.parse(data);
+            jsonData['response']['events'].forEach(function(element) {
+              if(!Array.isArray(element['allowedRoleIds'])) return;
+                if(element['allowedRoleIds'][0] == 413){
+                        pcArray.push(element);
+                }
+            })
+          pc(pcArray, client, jsonData['response']['endDate']);
+        });
+    })
+    response.sendStatus(200);
+});
+
+var xbox = function xbox(data, client, endDate)
+{
+  var Discord = require("discord.js");
+    var output = new Discord.RichEmbed()
+        .setTitle(`XBOX Events between now and ${endDate}`)
+        .setColor("#0e7a0d");
+  
+    data.forEach(function(item) {
+
+      output.addField(item['name'], `Officer: ${item['createdBy']}\nDate/Time: ${item['happensAt']}\nLink: https://www.guilded.gg/G4G/games/Destiny2/calendar/event/${item['eventId']}`);
+    })
+    
+    client.channels.get('374526635279646721').send(output);
+    //format data for output then send
+};
+
+var ps4 = function ps4(data, client, endDate)
+{
+  var Discord = require("discord.js");
+    var output = new Discord.RichEmbed()
+        .setTitle(`PS4 Events between now and ${endDate}`)
+        .setColor("#3498db");
+  
+    data.forEach(function(item) {
+
+      output.addField(item['name'], `Officer: ${item['createdBy']}\nDate/Time: ${item['happensAt']}\nLink: https://www.guilded.gg/G4G/games/Destiny2/calendar/event/${item['eventId']}`);
+    })
+    
+    client.channels.get('374526606749728768').send(output);
+    //format data for output then send
+};
+
+var pc = function pc(data, client, endDate)
+{
+  var Discord = require("discord.js");
+    var output = new Discord.RichEmbed()
+        .setTitle(`PC Events between now and ${endDate}`)
+        .setColor("#f1c40f");
+  
+    data.forEach(function(item) {
+
+      output.addField(item['name'], `Officer: ${item['createdBy']}\nDate/Time: ${item['happensAt']}\nLink: https://www.guilded.gg/G4G/games/Destiny2/calendar/event/${item['eventId']}`);
+    })
+    
+    client.channels.get('374526651997880320').send(output);
+    //format data for output then send
+}
+
+app.listen(process.env.PORT);
+setInterval(() => {
+    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
+
 console.log(client.config.permLevels.map(p => `${p.level} : ${p.name}`));
 
 const init = async () => {
@@ -189,7 +304,7 @@ client.on("disconnect", () => client.logger.warn("Bot is disconnecting..."))
       .on("reconnecting", () => client.logger.log("Bot reconnecting...", "log"))
       .on("error", e => client.logger.error(e))
       .on("warn", info => client.logger.warn(info));
-
+      
 String.prototype.toProperCase = function () {
     return this.replace(/([^\W_]+[^\s-]*) */g, function (txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 };
@@ -209,3 +324,5 @@ process.on("uncaughtException", (err) => {
 process.on("unhandledRejection", err => {
     console.error("Uncaught Promise Error: ", err);
 });
+
+
