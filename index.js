@@ -1,23 +1,16 @@
 if (Number(process.version.slice(1).split(".")[0]) < 8) throw new Error("Node 8.0.0 or higher is required. Update Node on your system.");
 
-const { Client, Collection } = require("discord.js");
+const { Client, Collection, Discord } = require("discord.js");
 const { promisify } = require("util");
 const readdir = promisify(require("fs").readdir);
 const Enmap = require("enmap");
 const klaw = require("klaw");
 const path = require("path");
 const http = require('http');
+const https = require('https');
 const express = require('express');
 const app = express();
-
-app.get('/', (request, response) => {
-    console.log(Date.now() + " Ping Received");
-    response.sendStatus(200);
-});
-app.listen(process.env.PORT);
-setInterval(() => {
-    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-}, 280000);
+let xboxArray = [];
 
 class Bot extends Client {
     constructor (options) {
@@ -34,6 +27,7 @@ class Bot extends Client {
         this.aliases = new Collection();
 
         this.settings = new Enmap({ name: "settings", cloneLevel: "deep", fetchAll: false, autoFetch: true });
+
         this.logger = require("./modules/Logger");
         this.wait = require("util").promisify(setTimeout);
     }
@@ -141,6 +135,91 @@ class Bot extends Client {
 }
 
 const client = new Bot();
+
+app.get('/', (request, response) => {
+    response.sendStatus(200);
+});
+app.get('/upcoming', async (request, response) => {
+    https.get(`https://api.guilded.gg/teams/QR4AyKlP/events?endDate=2019-04-04`, (resp) => {
+
+        let data = '';
+
+        //a chunk of data has been received
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        //the whole response is here
+        resp.on('end', async () => {
+            let jsonData = JSON.parse(data);
+
+            jsonData['events'].forEach(function(element) {
+              if(!Array.isArray(element['allowedRoleIds'])) return;
+                if(element['allowedRoleIds'][0] == 411){
+                        xboxArray.push(element);
+
+                }
+            })
+          return await xbox(xboxArray, client);
+            //define 3 empty arrays, pc, ps4, xbox
+            //foreach the data to loop
+            //depending on requiredRole id, place into one of 3 arrays defined
+            //once at the end, call xbox(), ps4(), pc()
+            
+        });
+    })
+
+function translate_name(id)
+{
+    https.get(`https://api.guilded.gg/users/${id}`, (resp) => {
+
+        let data = '';
+
+        //a chunk of data has been received
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        //the whole response is here
+        resp.on('end', () => {
+            var jsonData = JSON.parse(data);
+        });
+    });
+    return jsonData['user']['name'];
+}
+function xbox(data, client)
+{
+  var Discord = require("discord.js");
+    var output = new Discord.RichEmbed()
+        .setTitle(`XBOX Events between now and ${data['endDate']}`)
+        .setColor("#0e7a0d");
+  
+    data.forEach(function(item) {
+      output.addField(item['name'], `Officer: ${translate_name(item['createdBy'])}\nDate/Time: ${item['happensAt']}\nLink: https://www.guilded.gg/G4G/games/Destiny2/calendar/event/${item['eventId']}`);
+      console.log(item['name']);
+    })
+    
+    client.channels.get('520182741959180288').send(output);
+    //format data for output then send
+}
+
+function ps4(data)
+{
+    //format data for output then send
+}
+
+function pc(data)
+{
+    //format data for output then send
+}
+  
+    response.sendStatus(200);
+});
+
+app.listen(process.env.PORT);
+setInterval(() => {
+    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
+}, 280000);
 
 console.log(client.config.permLevels.map(p => `${p.level} : ${p.name}`));
 

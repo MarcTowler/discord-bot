@@ -1,4 +1,6 @@
 // This event executes when a new member joins a server. Let's welcome them!
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./data/users');
 
 module.exports = class {
   constructor(client) {
@@ -22,16 +24,23 @@ module.exports = class {
         .setTitle(`To gain membership and full access to the G4G server, please perform the following steps:`)
         .setDescription(`1: Set your Discord nickname for this server to your Bungie gamer tag or B.net ID\n` +
             `2: Confirm your age\n` +
-            `3: Confirm the Bungie Clan you have joined, eg G4G Orion\n` +
-            `4: Accept the invitation to join our Guilded page, authorizing with your Discord details\n` +
-            `5: Make sure you have \`Allow Direct Messages from Server Members\` turned on, this can be found in settings->Privacy and Safety`);
+            `3: Register on our website https://clanevents.net \n` +
+            `4: Link your discord account on Clan Events (click on your name on the top right->Profile->External Logins->Discord)\n` +
+            `5: Make sure you have \`Allow Direct Messages from Server Members\` turned on, this can be found in settings->Privacy and Safety\n` +
+            '6: Type `!check` in this channel');
 
     if (member.guild.id === "220467406559117312") { //G4G
-      member.guild.channels.get('525270659438215178').send(`Welcome to G4G <@${member.user.id}>`)
-          .then(message =>
-              member.guild.channels.get('525270659438215178').send(REmbed))
-          .then(msg => member.guild.channels.get('538644586394812416').send(`oi ***fuckers*** stop chattin shit and get yo bitch asses into #pending_pool and welcome this mofo named <@${member.user.id}>`));
-      member.guild.channels.get('544812700459335680').send(`${member.user.username} has joined`);  //bot log channel
+        db.run('INSERT INTO users(name, id) VALUES(?, ?)', [member.user.username, member.user.id], (err) => {
+            if(err) {
+                return console.log(err.message); 
+            }
+        });
+
+        member.guild.channels.get('525270659438215178').send(`Welcome to G4G <@${member.user.id}>`)
+            .then(message =>
+                member.guild.channels.get('525270659438215178').send(REmbed))
+                .then(msg => member.guild.channels.get('538644586394812416').send(`**BEHOLD** <@${member.user.id}> has joined! Please look after them in #pending_pool`))
+                .then(msg => member.guild.channels.get('544812700459335680').send(`${member.user.username} has joined`));  //bot log channel
     }
   };
 }

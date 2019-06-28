@@ -11,7 +11,7 @@ class voice extends Command {
             usage: "voice create <Optional: list of usernames, tagged> OR voice delete OR voice invite @username",
             guildOnly: true,
             aliases: [],
-            permLevel: "Officer"
+            permLevel: "P.C"
         });
     }
 
@@ -23,15 +23,32 @@ class voice extends Command {
             switch(args[0].toLowerCase())
             {
                 case 'create':
-                    message.guild.createChannel(`${message.member.displayName}'s fireteam`, 'voice')
+                    if(args.length > 1)
+                    {
+                      let shifted = args.slice(1).join(" ");
+                      message.guild.createChannel(`${shifted}`, 'voice')
                         .then(channel => {
                             message.member.addRole(message.member.guild.roles.find('name', 'FireTeamVOIP'));
                             deleteEmptyChannelAfterDelay(channel, message);
                             channel.setParent('370180211037175818')
-                                .catch(error => console.log(error));
+                                .catch(error => console.log(error))
+                        .then(msg => message.member.guild.channels.get('544812700459335680').send(`${message.member.user.username} created a VOIP channel`)); 
                         })
                         .catch(console.error);
-                    
+                    } else {
+
+                    message.guild.createChannel(`${message.member.displayName}'s fireteam`, 'voice')
+                        .then(channel => {
+                            message.member.addRole(message.member.guild.roles.find('name', 'FireTeamVOIP'));
+                            deleteEmptyChannelAfterDelay(channel, message);
+
+                            channel.setBitrate(96)
+                            channel.setParent('370180211037175818')
+                                .catch(error => console.log(error))
+                      .then(msg => message.member.guild.channels.get('544812700459335680').send(`${message.member.user.username} created a VOIP channel via command`));
+                        })
+                        .catch(console.error);
+                    }
                     break;
                 case 'invite':
                     //check the caller has a voip channel first
@@ -53,6 +70,15 @@ class voice extends Command {
                         message.guild.member(user).addRole(VOIProle.id)
                         .then(message.guild.member(user).send(`You were invited to join the voice channel ${message.member.displayName}'s fireteam`));
                     })
+
+                  
+                    break;
+              case 'delete':
+                    let string = args.slice(1).join(" ");
+                    let id = message.guild.channels.find('name', string);
+                    
+                    id.delete();
+
             }
         }
     }
