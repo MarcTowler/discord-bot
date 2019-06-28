@@ -36,10 +36,12 @@ class voice extends Command {
                         })
                         .catch(console.error);
                     } else {
+
                     message.guild.createChannel(`${message.member.displayName}'s fireteam`, 'voice')
                         .then(channel => {
                             message.member.addRole(message.member.guild.roles.find('name', 'FireTeamVOIP'));
                             deleteEmptyChannelAfterDelay(channel, message);
+
                             channel.setBitrate(96)
                             channel.setParent('370180211037175818')
                                 .catch(error => console.log(error))
@@ -68,6 +70,7 @@ class voice extends Command {
                         message.guild.member(user).addRole(VOIProle.id)
                         .then(message.guild.member(user).send(`You were invited to join the voice channel ${message.member.displayName}'s fireteam`));
                     })
+
                   
                     break;
               case 'delete':
@@ -75,6 +78,7 @@ class voice extends Command {
                     let id = message.guild.channels.find('name', string);
                     
                     id.delete();
+
             }
         }
     }
