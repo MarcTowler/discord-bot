@@ -24,6 +24,7 @@
   "dependencies": {
     "better-sqlite-pool": "github:eslachance/better-sqlite-pool",
     "chalk": "^2.4.1",
+    "csv-writer": "^1.4.0",
     "dateformat": "^3.0.3",
     "discord.js": "^11.4.2",
     "enmap": "^4.3.2",
