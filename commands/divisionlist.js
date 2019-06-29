@@ -1,10 +1,10 @@
 const Command = require("../base/Command.js");
 const Discord = require("discord.js");
 
-class DivisionList extends Command {
+class divisionlist extends Command {
     constructor(client) {
         super(client, {
-            name: "division list",
+            name: "divisionlist",
             description: "view a count of members by each division / platform",
             category: "Clan",
             usage: "divisionlist",
@@ -25,7 +25,7 @@ async run(message, args, level) {
 	let hydra = "507990801658150917";
 	//PC division roles
 	let draco = "480005533643046932";
-	let pheonix = "493721218600402944";
+	let lynx = "590211899384397846";
 
 	let ps4d1 = message.guild.roles.get(pegasus).members;
 	let ps4d2 = message.guild.roles.get(cygnus).members;
@@ -35,12 +35,28 @@ async run(message, args, level) {
 	let xboxd2 = message.guild.roles.get(hydra).members;
 
 	let pcd1 = message.guild.roles.get(draco).members;
-	let pcd2 = message.guild.roles.get(pheonix).members;
+	let pcd2 = message.guild.roles.get(lynx).members;
 	let pcd3 = message.guild.roles.get(scorpius).members;
 
-function send2Embeds(message) {
-    let channel = message.channel;
+	var string = "```\n";
 
+	for(const i of pcd3)
+	{
+		for(const u of i)
+		{
+			if(u['user'] != undefined)
+			{
+				string = string + u['user']['username'] + "\n";
+			}
+		}
+	}
+
+	var string = string + "```";
+
+	message.author.send(string);
+
+    let channel = message.channel;
+/*
     // next create rich embeds
     let embed1 = new Discord.RichEmbed()
 		.setAuthor('Playstation Divisions')
@@ -59,7 +75,7 @@ function send2Embeds(message) {
 		.setAuthor('PC Divisions')
 		.setThumbnail('https://cdn3.iconfinder.com/data/icons/picons-social/57/72-windows8-512.png')
 		.addField('Draco', `${pcd1.size} members`, true)
-		.addField('Phoenix', `${pcd2.size} members`, true)
+		.addField('Lynx', `${pcd2.size} members`, true)
 		.addField('Scorpius', `${pcd3.size} members`, true);
 
     // send embed to channel
@@ -70,9 +86,9 @@ function send2Embeds(message) {
     }).then(msg => {
         // after the second is sent, send the 3rd (makes sure it's in the correct order)
         channel.send(embed3);
-    });
-}
+    });*/
 }
 }
 
-module.exports = DivisionList;
+
+module.exports = divisionlist;

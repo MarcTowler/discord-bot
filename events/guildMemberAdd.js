@@ -39,7 +39,7 @@ module.exports = class {
         member.guild.channels.get('525270659438215178').send(`Welcome to G4G <@${member.user.id}>`)
             .then(message =>
                 member.guild.channels.get('525270659438215178').send(REmbed))
-                .then(msg => member.guild.channels.get('538644586394812416').send(`**BEHOLD** <@${member.user.id}> has joined! Please look after them in #pending_pool`))
+                .then(msg => member.guild.channels.get('538644586394812416').send(`**BEHOLD** <@${member.user.id}> has joined! They are currently verifying on Clan Events`))
                 .then(msg => member.guild.channels.get('544812700459335680').send(`${member.user.username} has joined`));  //bot log channel
     }
   };
