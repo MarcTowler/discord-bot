@@ -5,6 +5,13 @@ module.exports = class {
     }
 
     async run(member) {
-        member.guild.channels.get('538644586394812416').send(`${member.user.username} has left, please remove them from Bungie and Guilded`);
+        const entry = await message.guild.fetchAuditLogs({type: 'MEMBER_KICK'}).then(audit => audit.entries.first());
+
+        if(entry.target['id'] === member.user.id)
+        {
+            member.guild.channels.get('544812700459335680').send(`${member.user.username} was kicked`);
+        } else {
+            member.guild.channels.get('538644586394812416').send(`${member.user.username} has left, please remove them from Bungie`);
+        }
     }
 }
