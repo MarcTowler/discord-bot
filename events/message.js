@@ -8,7 +8,7 @@ module.exports = class {
   }
 
   async run (message) {
-    const Discord = require('discord.js');
+    /*const Discord = require('discord.js');
 
     const applicationFormCompleted = (data) => {
       let REmbed = new Discord.RichEmbed()
@@ -89,7 +89,7 @@ module.exports = class {
       } else if (!isRedo) {
         message.reply("You have not started an event request yet.");
       }
-    };
+    };*/
 
     // It's good practice to ignore other bots. This also makes your bot ignore itself
     // and not get into a spam loop (we call that "botception").
@@ -97,7 +97,7 @@ module.exports = class {
 
     if(message.channel.type == 'dm')
     {
-      const user = usersApplicationStatus.find(user => user.id === message.author.id);
+      /*const user = usersApplicationStatus.find(user => user.id === message.author.id);
 
       if (user && message.content) {
         switch (user.currentStep) {
@@ -120,7 +120,7 @@ module.exports = class {
             }
               */
             //Need to find a better way to to do the 24 hour check, maybe split the incoming date by / or - (depending on input), rearrange it then date parse?
-
+/*
             break;
           case 2:
             if (message.content.length < 4 || message.content.length > 5) {
@@ -221,7 +221,7 @@ module.exports = class {
           }
           message.author.send(applicationQuestions[user.currentStep]);
         }
-      }
+      }*/
     }
 
     // Grab the settings for this server from Enmap.
@@ -239,10 +239,10 @@ module.exports = class {
     const args = message.content.slice(settings.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
 
-    if(command === "test")
+    /*if(command === "test")
     {
       sendUserApplyForm(message);
-    }
+    }*/
 
     // If the member on a guild is invisible or not cached, fetch them.
     if (message.guild && !message.member) await message.guild.fetchMember(message.author);

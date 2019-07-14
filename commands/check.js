@@ -61,7 +61,7 @@ class check extends Command {
                     });
                 } else {
                     message.react('❎');
-                    message.reply('It seems you still have not fully registered on Clan Events (https://clanevents.net) please do so then re-run `!check`. If you are having issues ping Clan Council');
+                    message.reply(`It seems you still have not fully registered on Clan Events (https://clanevents.net) please do so then re-run `!check`. The message from the site is: \`${jsonData['response']['message']}\``);
                 }
             });
         });
