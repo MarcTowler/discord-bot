@@ -34,8 +34,22 @@ class check extends Command {
 
                 if(jsonData['response']['success'])
                 {
-                    let memberType = (jsonData['response']['memberType'] == 'Member') ? "have joined" : "are pending acceptance into";
+                    var memberType = '';
                     var clans = '';
+
+                    switch(jsonData['response']['memberType'])
+                    {
+                        case 'Member':
+                            memberType = "have joined";
+
+                            break;
+                        case 'Beginner':
+                            memberType = "pending promotion from beginner";
+
+                            break;
+                        default:
+                            memberType = "are pending acceptance into";
+                    }
 
                     if(Array.isArray(jsonData['response']['Clan']))
                     {
@@ -61,7 +75,7 @@ class check extends Command {
                     });
                 } else {
                     message.react('❎');
-                    message.reply(`It seems you still have not fully registered on Clan Events (https://clanevents.net) please do so then re-run `!check`. The message from the site is: \`${jsonData['response']['message']}\``);
+                    message.reply(`It seems you still have not fully registered on Clan Events (https://clanevents.net) please do so then re-run \`!check\`. The message from the site is: \`${jsonData['response']['message']}\``);
                 }
             });
         });
