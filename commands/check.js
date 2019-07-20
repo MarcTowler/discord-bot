@@ -19,7 +19,7 @@ class check extends Command {
     async run(message, args, level) {
         //if(message.channel.id !== '543718193093672960') return;
 
-        http.get(`http://api/G4G/verifyUser/${message.author.id}`, (resp) => {
+        http.get(`http://api.itslit.uk/G4G/verifyUser/${message.author.id}`, (resp) => {
 
             let data = '';
 
@@ -34,22 +34,8 @@ class check extends Command {
 
                 if(jsonData['response']['success'])
                 {
-                    var memberType = '';
+                    let memberType = (jsonData['response']['memberType'] == 'Member') ? "have joined" : "are pending acceptance into";
                     var clans = '';
-
-                    switch(jsonData['response']['memberType'])
-                    {
-                        case 'Member':
-                            memberType = "have joined";
-
-                            break;
-                        case 'Beginner':
-                            memberType = "pending promotion from beginner";
-
-                            break;
-                        default:
-                            memberType = "are pending acceptance into";
-                    }
 
                     if(Array.isArray(jsonData['response']['Clan']))
                     {
