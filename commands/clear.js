@@ -23,8 +23,12 @@ class Clear extends Command {
         if (args[0] > 99) {
             return message.channel.send("The Limit for this command is 100, try again");
         }
-        message.channel.bulkDelete(real).then(() => {
+        message.channel.bulkDelete(real)
+        .then(() => {
             message.channel.send(`Deleted ${args[0]} messages.`).then(msg => msg.delete(4000));
+        })
+        .catch(function(error) {
+            message.reply(error);
         });
     }
 }

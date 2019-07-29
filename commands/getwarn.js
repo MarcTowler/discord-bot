@@ -43,6 +43,10 @@ class getwarn extends Command {
                 
                 message.reply(embed);
             });
+
+            resp.on('error', () => {
+                message.reply('Currently unable to access the warning database, if this persists please ping ItsLittany');
+            });
         });
     }
 }

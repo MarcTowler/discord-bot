@@ -137,6 +137,10 @@ class Points extends Command {
                                 message.channel.send(REmbed);
 
                             });
+
+                            resp.on('error', () => {
+                                message.reply('Currently unable to access the Points from Clan Events, if this persists please ping ItsLittany');
+                            });
                         }).on("error", (err) => {
                             message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);
                             message.guild.fetchMember('131526937364529152').then(user => {
@@ -177,6 +181,10 @@ class Points extends Command {
                                 .addField(`Number of ${args[0]} Prestiges`, jsonData['playerResets']);
 
                             message.channel.send(REmbed);
+                        });
+
+                        resp.on('error', () => {
+                            message.reply('Currently unable to access the Points from Clan Events, if this persists please ping ItsLittany');
                         });
                     }).on("error", (err) => {
                         message.channel.send(`It seems that something has gone wrong, <@131526937364529152> has been notified and is looking into it.`);

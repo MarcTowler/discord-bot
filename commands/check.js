@@ -34,8 +34,15 @@ class check extends Command {
 
                 if(jsonData['response']['success'])
                 {
-                    let memberType = (jsonData['response']['memberType'] == 'Member') ? "have joined" : "are pending acceptance into";
+                    let memberType = '';
                     var clans = '';
+
+                    if(memberType == "Member" || memberType == "Beginner")
+                    {
+                        memberType = "have joined";
+                    } else {
+                        memberType = "are pending acceptance into";
+                    }
 
                     if(Array.isArray(jsonData['response']['Clan']))
                     {
@@ -63,6 +70,9 @@ class check extends Command {
                     message.react('❎');
                     message.reply(`It seems you still have not fully registered on Clan Events (https://clanevents.net) please do so then re-run \`!check\`. The message from the site is: \`${jsonData['response']['message']}\``);
                 }
+            });
+            resp.on('error', () => {
+                message.reply('Sorry, I was unable to speak with Clan Events. This could be due to Bungie\'s API being down for maintainance.');
             });
         });
     }

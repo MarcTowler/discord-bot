@@ -57,6 +57,10 @@ class warnlist extends Command {
               
                 message.channel.send(content + '```');
             });
+
+            resp.on('error', () => {
+                message.reply('Currently unable to access the warning database, if this persists please ping ItsLittany');
+            });
         });
 
         //post it to the API for storage
