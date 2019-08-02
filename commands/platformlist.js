@@ -40,5 +40,6 @@ async run(message, args, level) {
 });
 
 }
+}
 
 module.exports = Platform;
