@@ -6,3 +6,4 @@ data/*
 config.js
 config.js.example
 credentials.json
+commands/test.js
