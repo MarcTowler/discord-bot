@@ -18,8 +18,16 @@ class check extends Command {
 
     async run(message, args, level) {
         //if(message.channel.id !== '543718193093672960') return;
+        var id = 0;
 
-        http.get(`http://api.itslit.uk/G4G/verifyUser/${message.author.id}`, (resp) => {
+        if(args.length > 0)
+        {
+            id = message.guild.member(message.mentions.users.first()) || message.guild.member(args[0])['user'].id;
+        } else {
+            id = message.author.id;
+        }
+
+        http.get(`http://api.itslit.uk/G4G/verifyUser/${id}`, (resp) => {
 
             let data = '';
 
