@@ -17,9 +17,9 @@ class EightBall extends Command {
     async run(message, [action, key, ...value], level) { // eslint-disable-line no-unused-vars
         if(message.content.endsWith('?'))
         {
-            message.reply(`🎱 ${answers[Math.floor(Math.random() * answers.length)]}`);
+            message.reply(`🎱 ${answers[Math.floor(Math.random() * answers.length)]} 🎱`);
         } else {
-            message.reply(`🎱 That doesn't look like a question, try again please.`);
+            message.reply(`🎱 That doesn't look like a question, try again please. 🎱`);
         }
     }
 }

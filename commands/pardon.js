@@ -34,6 +34,10 @@ class pardon extends Command {
 
                 message.reply(success);
             });
+
+            resp.on('error', () => {
+                message.reply('Currently unable to access the warning database, if this persists please ping ItsLittany');
+            });
         });
     }
 }

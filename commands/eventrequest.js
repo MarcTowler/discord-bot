@@ -15,7 +15,7 @@ class eventrequest extends Command {
     }
 
     async run(message, args, level) { // eslint-disable-line no-unused-vars
-
+        message.reply('This has now been depricated, please make the request on Clan Events.');
     }
 }
 

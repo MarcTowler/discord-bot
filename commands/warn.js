@@ -59,6 +59,10 @@ class warn extends Command {
                     message.reply('The server is currently unavailable, ping ItsLittany for assistance');
                 }
             });
+
+            resp.on('error', () => {
+                message.reply('Currently unable to access the warning database, if this persists please ping ItsLittany');
+            });
         });
 
         req.write(payload);
