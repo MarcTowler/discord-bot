@@ -1,7 +1,8 @@
 const Command = require("../base/Command.js");
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./data/users');
-const http = require('http');
+const https = require('https');
+const Discord = require('discord.js');
 
 class check extends Command {
     constructor(client) {
@@ -27,7 +28,7 @@ class check extends Command {
             id = message.author.id;
         }
 
-        http.get(`http://api.itslit.uk/G4G/verifyUser/${id}`, (resp) => {
+        https.get(`https://api.itslit.uk/G4G/verifyUser/${id}`, (resp) => {
 
             let data = '';
 
@@ -38,6 +39,7 @@ class check extends Command {
 
             //the whole response is here
             resp.on('end', () => {
+              console.log(data);
                 let jsonData = JSON.parse(data);
 
                 if(jsonData['response']['success'])
@@ -67,7 +69,8 @@ class check extends Command {
                     }
 
                     message.react('✅');
-                    message.member.guild.channels.get('538644586394812416').send(`<@${message.author.id}> has verified on Clan Events. They ${memberType} ${clans}. Please verify their age in #pending_pool and add roles!`);
+                  //console.log(message.member.guild.channels)
+                    message.member.guild.channels.get('615820575041912832').send(`<@${message.author.id}> has verified on Clan Events. They ${memberType} ${clans}. Please verify their age in #pending_pool and add roles!`);
 
                     db.run('UPDATE users SET division = ? WHERE id = ?', [clans, message.author.id], (err) => {
                         if(err) {
@@ -76,7 +79,7 @@ class check extends Command {
                     });
                 } else {
                     message.react('❎');
-                    message.reply(`It seems you still have not fully registered on Clan Events (https://clanevents.net) please do so then re-run \`!check\`. The message from the site is: \`${jsonData['response']['message']}\``);
+                    message.reply(`Something wasn't right, check the following message, fix it then please re-run \`!check\`. The message from the site is: \`${jsonData['response']['message']}\``);
                 }
             });
             resp.on('error', () => {
